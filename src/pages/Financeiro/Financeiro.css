@@ -1,0 +1,17 @@
+
+.section-title {
+  font-weight: bold;
+  background: #f8f9fa;
+  padding: 10px;
+  border: 1px solid #dee2e6;
+  margin-top: 20px;
+}
+.add-link {
+  color: #fd7e14;
+  cursor: pointer;
+  font-weight: bold;
+}
+.tabs .nav-link.active {
+  background-color: #ffc107;
+  font-weight: bold;
+}

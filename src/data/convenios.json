@@ -1,0 +1,165 @@
+{
+    "convenios": [
+      {
+        "nome": "Alice",
+        "codigo": "421928",
+        "tipo": "Saúde"
+      },
+      {
+        "nome": "Allianz Saúde",
+        "codigo": "000515",
+        "tipo": "Saúde"
+      },
+      {
+        "nome": "Ameplan Saúde",
+        "codigo": "394734",
+        "tipo": "Saúde"
+      },
+      {
+        "nome": "Amil",
+        "codigo": "326305",
+        "tipo": "Saúde"
+      },
+      {
+        "nome": "Ampla Saúde",
+        "codigo": "422720",
+        "tipo": "Saúde"
+      },
+      {
+        "nome": "Ana Costa Saúde",
+        "codigo": "360244",
+        "tipo": "Saúde"
+      },
+      {
+        "nome": "Ativia Saúde",
+        "codigo": "320510",
+        "tipo": "Saúde"
+      },
+      {
+        "nome": "Biosaúde",
+        "codigo": "402966",
+        "tipo": "Saúde"
+      },
+      {
+        "nome": "Biovida Saúde",
+        "codigo": "415111",
+        "tipo": "Saúde"
+      },
+      {
+        "nome": "Blue",
+        "codigo": "423173",
+        "tipo": "Saúde"
+      },
+      {
+        "nome": "Blue Med Saúde",
+        "codigo": "344800",
+        "tipo": "Saúde"
+      },
+      {
+        "nome": "Bradesco Saúde",
+        "codigo": "005711",
+        "tipo": "Seguro"
+      },
+      {
+        "nome": "Caixa Saúde",
+        "codigo": "418072",
+        "tipo": "Saúde"
+      },
+      {
+        "nome": "Care Plus",
+        "codigo": "379956",
+        "tipo": "Saúde"
+      },
+      {
+        "nome": "Cruz Azul Saúde",
+        "codigo": "411752",
+        "tipo": "Saúde"
+      },
+      {
+        "nome": "Cuidar.Me",
+        "codigo": "422606",
+        "tipo": "Saúde"
+      },
+      {
+        "nome": "Golden Cross",
+        "codigo": "403911",
+        "tipo": "Seguro"
+      },
+      {
+        "nome": "Greenline Saúde",
+        "codigo": "325074",
+        "tipo": "Saúde"
+      },
+      {
+        "nome": "Hapvida",
+        "codigo": "368253",
+        "tipo": "Saúde"
+      },
+      {
+        "nome": "Notre Dame Intermédica",
+        "codigo": "359017",
+        "tipo": "Saúde"
+      },
+      {
+        "nome": "One Health",
+        "codigo": "326305",
+        "tipo": "Saúde"
+      },
+      {
+        "nome": "Porto Seguro Saúde",
+        "codigo": "000582",
+        "tipo": "Seguro"
+      },
+      {
+        "nome": "Prevent Senior",
+        "codigo": "302147",
+        "tipo": "Saúde"
+      },
+      {
+        "nome": "QSaúde",
+        "codigo": "421669",
+        "tipo": "Saúde"
+      },
+      {
+        "nome": "Sami",
+        "codigo": "422398",
+        "tipo": "Saúde"
+      },
+      {
+        "nome": "Santa Helena Saúde",
+        "codigo": "355097",
+        "tipo": "Saúde"
+      },
+      {
+        "nome": "São Cristóvão Saúde",
+        "codigo": "314218",
+        "tipo": "Saúde"
+      },
+      {
+        "nome": "Seguros Unimed",
+        "codigo": "000701",
+        "tipo": "Seguro"
+      },
+      {
+        "nome": "Sompo Saúde",
+        "codigo": "000477",
+        "tipo": "Seguro"
+      },
+      {
+        "nome": "Sul América Saúde",
+        "codigo": "006246",
+        "tipo": "Seguro"
+      },
+      {
+        "nome": "Unimed Nacional",
+        "codigo": "339679",
+        "tipo": "Cooperativa"
+      },
+      {
+        "nome": "Particular",
+        "codigo": null,
+        "tipo": "Particular"
+      }
+    ]
+  }
+  

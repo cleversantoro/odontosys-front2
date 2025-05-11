@@ -3,13 +3,14 @@ import { Link, useLocation } from "react-router";
 
 // Assume these icons are imported from an icon library
 import {
-  BoxCubeIcon, CalenderIcon, ChevronDownIcon,
-  GridIcon, HorizontaLDots, ListIcon, PageIcon, PieChartIcon,
-  PlugInIcon, TableIcon, UserCircleIcon,
+  BoxIcon,
+  CalenderIcon, ChevronDownIcon,
+  DollarLineIcon, GridIcon, GroupIcon, HorizontaLDots, PencilIcon, PieChartIcon,
+  UserCircleIcon, UserIcon,
 } from "../icons";
 
 import { useSidebar } from "../context/SidebarContext";
-import SidebarWidget from "./SidebarWidget";
+//import SidebarWidget from "./SidebarWidget";
 
 type NavItem = {
   name: string;
@@ -23,15 +24,20 @@ const navItems: NavItem[] = [
     icon: <GridIcon />,
     name: "Dashboard",
     subItems: [
-      { name: "Ecommerce", path: "/Home", pro: false },
+      // { name: "Ecommerce", path: "/Home", pro: false },
       { name: "DashBoard Consultas", path: "/DashBoardConsultas", pro: false },
       { name: "DashBoard Despesas", path: "/DashboardDespesas", pro: false },
+      { name: "Calendar", path: "/Calendar", pro: false },
     ],
   },
 
   { icon: <CalenderIcon />, name: "Agendamentos", path: "/Agendamentos", },
-  { icon: <UserCircleIcon />, name: "User Profile", path: "/profile", },
-
+  { icon: <BoxIcon />, name: "Consultas", path: "/Consultas", },
+  { icon: <GroupIcon />, name: "Pacientes", path: "/Pacientes", },
+  { icon: <UserIcon />, name: "Profissionais", path: "/Profissionais", },
+  { icon: <PencilIcon />, name: "Orcamentos", path: "/Orcamentos", },
+  { icon: <DollarLineIcon />, name: "Financeiro", path: "/Financeiro", },
+  { icon: <UserCircleIcon />, name: "Seu Perfil", path: "/profile", },
   // {
   //   icon: <ListIcon />, name: "Forms",
   //   subItems: [{ name: "Form Elements", path: "/form-elements", pro: false }],
@@ -43,45 +49,53 @@ const navItems: NavItem[] = [
   //   subItems: [{ name: "Basic Tables", path: "/basic-tables", pro: false }],
   // },
 
-  {
-    name: "Pages",
-    icon: <PageIcon />,
-    subItems: [
-      { name: "Blank Page", path: "/blank", pro: false },
-      { name: "404 Error", path: "/error-404", pro: false },
-    ],
-  },
+  // {
+  //   name: "Pages",
+  //   icon: <PageIcon />,
+  //   subItems: [
+  //     { name: "Blank Page", path: "/blank", pro: false },
+  //     { name: "404 Error", path: "/error-404", pro: false },
+  //   ],
+  // },
 ];
 
 const othersItems: NavItem[] = [
   {
     icon: <PieChartIcon />,
-    name: "Charts",
+    name: "Admin",
     subItems: [
-      { name: "Line Chart", path: "/line-chart", pro: false },
-      { name: "Bar Chart", path: "/bar-chart", pro: false },
+      { name: "Usuarios", path: "/Usuarios", pro: false },
+      { name: "Menus", path: "/Config", pro: false },
     ],
   },
-  {
-    icon: <BoxCubeIcon />,
-    name: "UI Elements",
-    subItems: [
-      { name: "Alerts", path: "/alerts", pro: false },
-      { name: "Avatar", path: "/avatars", pro: false },
-      { name: "Badge", path: "/badge", pro: false },
-      { name: "Buttons", path: "/buttons", pro: false },
-      { name: "Images", path: "/images", pro: false },
-      { name: "Videos", path: "/videos", pro: false },
-    ],
-  },
-  {
-    icon: <PlugInIcon />,
-    name: "Authentication",
-    subItems: [
-      { name: "Sign In", path: "/signin", pro: false },
-      { name: "Sign Up", path: "/signup", pro: false },
-    ],
-  },
+  // {
+  //   icon: <PieChartIcon />,
+  //   name: "Charts",
+  //   subItems: [
+  //     { name: "Line Chart", path: "/line-chart", pro: false },
+  //     { name: "Bar Chart", path: "/bar-chart", pro: false },
+  //   ],
+  // },
+  // {
+  //   icon: <BoxCubeIcon />,
+  //   name: "UI Elements",
+  //   subItems: [
+  //     { name: "Alerts", path: "/alerts", pro: false },
+  //     { name: "Avatar", path: "/avatars", pro: false },
+  //     { name: "Badge", path: "/badge", pro: false },
+  //     { name: "Buttons", path: "/buttons", pro: false },
+  //     { name: "Images", path: "/images", pro: false },
+  //     { name: "Videos", path: "/videos", pro: false },
+  //   ],
+  // },
+  // {
+  //   icon: <PlugInIcon />,
+  //   name: "Authentication",
+  //   subItems: [
+  //     { name: "Sign In", path: "/signin", pro: false },
+  //     { name: "Sign Up", path: "/signup", pro: false },
+  //   ],
+  // },
 ];
 
 const AppSidebar: React.FC = () => {
@@ -92,9 +106,11 @@ const AppSidebar: React.FC = () => {
     type: "main" | "others";
     index: number;
   } | null>(null);
+
   const [subMenuHeight, setSubMenuHeight] = useState<Record<string, number>>(
     {}
   );
+
   const subMenuRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   // const isActive = (path: string) => location.pathname === path;
@@ -107,19 +123,20 @@ const AppSidebar: React.FC = () => {
     let submenuMatched = false;
     ["main", "others"].forEach((menuType) => {
       const items = menuType === "main" ? navItems : othersItems;
+
       items.forEach((nav, index) => {
+
         if (nav.subItems) {
           nav.subItems.forEach((subItem) => {
             if (isActive(subItem.path)) {
-              setOpenSubmenu({
-                type: menuType as "main" | "others",
-                index,
-              });
+              setOpenSubmenu({ type: menuType as "main" | "others", index, });
               submenuMatched = true;
             }
           });
         }
+
       });
+
     });
 
     if (!submenuMatched) {
@@ -280,41 +297,25 @@ const AppSidebar: React.FC = () => {
       onMouseEnter={() => !isExpanded && setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <div
-        className={`py-8 flex ${!isExpanded && !isHovered ? "lg:justify-center" : "justify-start"
-          }`}
-      >
-        <Link to="/">
-          {isExpanded || isHovered || isMobileOpen ? (
-            <>
-              <img
-                className="dark:hidden"
-                src="/images/logo/logo.svg"
-                alt="Logo"
-                width={150}
-                height={40}
-              />
-              <img
-                className="hidden dark:block"
-                src="/images/logo/logo-dark.svg"
-                alt="Logo"
-                width={150}
-                height={40}
-              />
-            </>
-          ) : (
-            <img
-              src="/images/logo/logo-icon.svg"
-              alt="Logo"
-              width={32}
-              height={32}
-            />
-          )}
+      <div className={`py-8 flex ${!isExpanded && !isHovered ? "lg:justify-center" : "justify-start"}`}>
+
+        <Link to="/Home">
+          {isExpanded || isHovered || isMobileOpen
+            ? (
+              <>
+                <img className="dark:hidden" src="/images/logo/logo.svg" alt="Logo" width={150} height={40} />
+                <img className="hidden dark:block" src="/images/logo/logo-dark.svg" alt="Logo" width={150} height={40} />
+              </>
+            )
+            : (<img src="/images/logo/logo-icon.svg" alt="Logo" width={32} height={32} />)}
         </Link>
+
       </div>
+
       <div className="flex flex-col overflow-y-auto duration-300 ease-linear no-scrollbar">
         <nav className="mb-6">
           <div className="flex flex-col gap-4">
+
             <div>
               <h2
                 className={`mb-4 text-xs uppercase flex leading-[20px] text-gray-400 ${!isExpanded && !isHovered
@@ -322,32 +323,28 @@ const AppSidebar: React.FC = () => {
                   : "justify-start"
                   }`}
               >
-                {isExpanded || isHovered || isMobileOpen ? (
-                  "Menu"
-                ) : (
-                  <HorizontaLDots className="size-6" />
-                )}
+                {isExpanded || isHovered || isMobileOpen
+                  ? ("Menu")
+                  : (<HorizontaLDots className="size-6" />)}
               </h2>
               {renderMenuItems(navItems, "main")}
             </div>
+
             <div className="">
-              <h2
-                className={`mb-4 text-xs uppercase flex leading-[20px] text-gray-400 ${!isExpanded && !isHovered
-                  ? "lg:justify-center"
-                  : "justify-start"
-                  }`}
+              <h2 className={`mb-4 text-xs uppercase flex leading-[20px] text-gray-400 ${!isExpanded && !isHovered
+                ? "lg:justify-center"
+                : "justify-start"
+                }`}
               >
-                {isExpanded || isHovered || isMobileOpen ? (
-                  "Others"
-                ) : (
-                  <HorizontaLDots />
-                )}
+                {isExpanded || isHovered || isMobileOpen
+                  ? ("Others")
+                  : (<HorizontaLDots className="size-6" />)}
               </h2>
               {renderMenuItems(othersItems, "others")}
             </div>
           </div>
         </nav>
-        {isExpanded || isHovered || isMobileOpen ? <SidebarWidget /> : null}
+        {/* {isExpanded || isHovered || isMobileOpen ? <SidebarWidget /> : null} */}
       </div>
     </aside>
   );

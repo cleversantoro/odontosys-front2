@@ -1,4 +1,7 @@
 import React, { useEffect, useState } from "react";
+import PageBreadcrumb from "../../components/common/PageBreadCrumb";
+import PageMeta from "../../components/common/PageMeta";
+
 import ReactApexChart from "react-apexcharts";
 import api from "../../services/api";
 
@@ -54,34 +57,46 @@ export default function DashboardDespesas() {
   };
 
   return (
-      <div className="p-4 border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] sm:p-6">
-        <h2 className="text-2xl font-semibold mb-4 text-lg font-semibold text-gray-800 dark:text-white/90">Dashboard de Despesas</h2>
+    <>
+      <PageMeta
+        title="OdontoSys | Dashboard de Clínica Odontológica em React.js"
+        description="Esta é a página do Dashboard da Clínica Odontológica OdontoSys, desenvolvido com React.js e Tailwind CSS"
+      />
+      <PageBreadcrumb pageTitle="DashBoard de Despesas" />
+      <div className="min-h-screen rounded-2xl border border-gray-200 bg-white px-5 py-7 dark:border-gray-800 dark:bg-white/[0.03] xl:px-10 xl:py-12">
+        <div className="mx-auto w-full max-w-[630px] text-center"></div>
 
-        <div className="bg-white p-6 rounded shadow mb-6">
-          <p className="text-lg">💸 Total gasto no período: <span className="font-bold text-red-600">R$ {total}</span></p>
-        </div>
+        <div className="p-4 border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] sm:p-6">
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="bg-white p-6 rounded shadow">
-            <h3 className="text-lg font-semibold mb-4">Distribuição por Categoria</h3>
-            <ReactApexChart
-              options={pieOptions}
-              series={porCategoria.map(c => c.value)}
-              type="pie"
-              height={300}
-            />
+          <div className="bg-white p-6 rounded shadow mb-6">
+            <p className="text-lg">💸 Total gasto no período: <span className="font-bold text-red-600">R$ {total}</span></p>
           </div>
 
-          <div className="bg-white p-6 rounded shadow">
-            <h3 className="text-lg font-semibold mb-4">Gastos por Dia</h3>
-            <ReactApexChart
-              options={lineOptions}
-              series={[{ name: 'Gastos', data: porData.map(d => d.valor) }]}
-              type="line"
-              height={300}
-            />
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="bg-white p-6 rounded shadow">
+              <h3 className="text-lg font-semibold mb-4">Distribuição por Categoria</h3>
+              <ReactApexChart
+                options={pieOptions}
+                series={porCategoria.map(c => c.value)}
+                type="pie"
+                height={300}
+              />
+            </div>
+
+            <div className="bg-white p-6 rounded shadow">
+              <h3 className="text-lg font-semibold mb-4">Gastos por Dia</h3>
+              <ReactApexChart
+                options={lineOptions}
+                series={[{ name: 'Gastos', data: porData.map(d => d.valor) }]}
+                type="line"
+                height={300}
+              />
+            </div>
           </div>
+          
         </div>
+
       </div>
+    </>
   );
 }

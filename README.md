@@ -1,192 +1,84 @@
-# TailAdmin React - Free React Tailwind Admin Dashboard Template
+# Sistema Odontológico
 
-TailAdmin is a free and open-source admin dashboard template built on **React and Tailwind CSS**, providing developers
-with everything they need to create a comprehensive, data-driven back-end,
-dashboard, or admin panel solution for upcoming web projects.
+Este é um sistema de gerenciamento para clínicas odontológicas, desenvolvido em React. O sistema permite gerenciar pacientes, orçamentos, procedimentos e finanças.
 
-With TailAdmin, you get access to all the necessary dashboard UI components, elements, and pages required to build a
-feature-rich and complete dashboard or admin panel. Whether you're building dashboard or admin panel for a complex web
-application or a simple website, TailAdmin is the perfect solution to help you get up and running quickly.
+## Funcionalidades
 
-![TailAdmin React.js Dashboard Preview](./banner.png)
+- **Gerenciamento de Pacientes**: Cadastro, atualização, listagem e exclusão de pacientes.
+- **Orçamentos**: Criação e listagem de orçamentos para procedimentos odontológicos.
+- **Histórico de Procedimentos**: Registro e consulta de procedimentos realizados.
+- **Financeiro**: Registro e consulta de pagamentos.
 
-## Overview
+## Tecnologias Utilizadas
 
-TailAdmin provides essential UI components and layouts for building feature-rich, data-driven admin dashboards and
-control panels. It's built on:
+- **React**: Biblioteca JavaScript para construção de interfaces de usuário.
+- **React Router**: Gerenciamento de rotas no aplicativo.
+- **AdminLTE**: Template para o painel administrativo.
+- **Postman**: Para testes de API.
 
-- React 19
-- TypeScript
-- Tailwind CSS
+## Pré-requisitos
 
-### Quick Links
+- Node.js
+- npm ou yarn
 
-- [✨ Visit Website](https://tailadmin.com)
-- [📄 Documentation](https://tailadmin.com/docs)
-- [⬇️ Download](https://tailadmin.com/download)
-- [🖌️ Figma Design File (Community Edition)](https://www.figma.com/community/file/1214477970819985778)
-- [⚡ Get PRO Version](https://tailadmin.com/pricing)
+## Instalação
 
-### Demos
+1. Clone o repositório:
 
-- [Free Version](https://free-react-demo.tailadmin.com/)
-- [Pro Version](https://react-demo.tailadmin.com)
+   ```bash
+   git clone https://github.com/seu-usuario/sistema-odontologico.git
+   cd sistema-odontologico
+   ```
 
-### Other Versions
-
-- [HTML Version](https://github.com/TailAdmin/tailadmin-free-tailwind-dashboard-template)
-- [Next.js Version](https://github.com/TailAdmin/free-nextjs-admin-dashboard)
-- [Vue.js Version](https://github.com/TailAdmin/vue-tailwind-admin-dashboard)
-
-## Installation
-
-### Prerequisites
-
-To get started with TailAdmin, ensure you have the following prerequisites installed and set up:
-
-- Node.js 18.x or later (recommended to use Node.js 20.x or later)
-
-### Cloning the Repository
-
-Clone the repository using the following command:
-
-```bash
-git clone https://github.com/TailAdmin/free-react-tailwind-admin-dashboard.git
-```
-
-> Windows Users: place the repository near the root of your drive if you face issues while cloning.
-
-1. Install dependencies:
+2. Instale as dependências:
 
    ```bash
    npm install
-   # or
+   ```
+
+   ou, se estiver usando yarn:
+
+   ```bash
    yarn install
    ```
 
-   > Use the `--legacy-peer-deps` flag, if you face issues while installing.
+3. Inicie o servidor de desenvolvimento:
 
-2. Start the development server:
    ```bash
-   npm run dev
-   # or
-   yarn dev
+   npm start
    ```
 
-## Components
+   ou, se estiver usando yarn:
 
-TailAdmin is a pre-designed starting point for building a web-based dashboard using React.js and Tailwind CSS. The
-template includes:
+   ```bash
+   yarn start
+   ```
 
-- Sophisticated and accessible sidebar
-- Data visualization components
-- Prebuilt profile management and 404 page
-- Tables and Charts(Line and Bar)
-- Authentication forms and input elements
-- Alerts, Dropdowns, Modals, Buttons and more
-- Can't forget Dark Mode 🕶️
+4. Abra o navegador e acesse `http://localhost:3000`.
 
-All components are built with React and styled using Tailwind CSS for easy customization.
+## Estrutura do Projeto
 
-## Feature Comparison
+- `src/components`: Contém os componentes React do projeto.
+- `src/context`: Contém o contexto de autenticação.
+- `public`: Contém o arquivo `index.html` e outros ativos públicos.
+- `src`: Contém o código-fonte principal do aplicativo.
 
-### Free Version
+## Testes de API
 
-- 1 Unique Dashboard
-- 30+ dashboard components
-- 50+ UI elements
-- Basic Figma design files
-- Community support
+Utilize a coleção do Postman incluída no projeto para testar as APIs. Importe o arquivo `Sistema_Odonto.postman_collection.json` no Postman.
 
-### Pro Version
+## Contribuição
 
-- 5 Unique Dashboards: Analytics, Ecommerce, Marketing, CRM, Stocks (more coming soon)
-- 400+ dashboard components and UI elements
-- Complete Figma design file
-- Email support
+1. Faça um fork do projeto.
+2. Crie uma branch para sua feature (`git checkout -b feature/nova-feature`).
+3. Faça commit das suas alterações (`git commit -m 'Adiciona nova feature'`).
+4. Faça push para a branch (`git push origin feature/nova-feature`).
+5. Abra um Pull Request.
 
-To learn more about pro version features and pricing, visit our [pricing page](https://tailadmin.com/pricing).
+## Licença
 
-## Changelog
+Este projeto está licenciado sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
 
-### Version 2.0.2 - [March 25, 2025]
+## Contato
 
-- Upgraded to React 19
-- Included overrides for packages to prevent peer dependency errors.
-- Migrated from react-flatpickr to flatpickr package for React 19 support
-
-### Version 2.0.1 - [February 27, 2025]
-
-#### Update Overview
-
-- Upgraded to Tailwind CSS v4 for better performance and efficiency.
-- Updated class usage to match the latest syntax and features.
-- Replaced deprecated class and optimized styles.
-
-#### Next Steps
-
-- Run npm install or yarn install to update dependencies.
-- Check for any style changes or compatibility issues.
-- Refer to the Tailwind CSS v4 [Migration Guide](https://tailwindcss.com/docs/upgrade-guide) on this release. if needed.
-- This update keeps the project up to date with the latest Tailwind improvements. 🚀
-
-### Version 2.0.0 - [February 2025]
-
-A major update with comprehensive redesign and modern React patterns implementation.
-
-#### Major Improvements
-
-- Complete UI redesign with modern React patterns
-- New features: collapsible sidebar, chat, and calendar
-- Improved performance and accessibility
-- Updated data visualization using ApexCharts
-
-#### Key Features
-
-- Redesigned dashboards (Ecommerce, Analytics, Marketing, CRM)
-- Enhanced navigation with React Router integration
-- Advanced tables with sorting and filtering
-- Calendar with drag-and-drop support
-- New UI components and improved existing ones
-
-#### Breaking Changes
-
-- Updated sidebar component API
-- Migrated charts to ApexCharts
-- Revised authentication system
-
-[Read more](https://tailadmin.com/docs/update-logs/react) on this release.
-
-### Version 1.3.7 - [June 20, 2024]
-
-#### Enhancements
-
-1. Remove Repetition of DefaultLayout in every Pages
-2. Add ClickOutside Component for reduce repeated functionality in Header Message, Notification and User Dropdowns.
-
-### Version 1.3.6 - [Jan 31, 2024]
-
-#### Enhancements
-
-1. Integrate flatpickr in [Date Picker/Form Elements]
-2. Change color after select an option [Select Element/Form Elements].
-3. Make it functional [Multiselect Dropdown/Form Elements].
-4. Make best value editable [Pricing Table One/Pricing Table].
-5. Rearrange Folder structure.
-
-### Version 1.2.0 - [Apr 28, 2023]
-
-- Add Typescript in TailAdmin React.
-
-### Version 1.0.0 - Initial Release - [Mar 13, 2023]
-
-- Initial release of TailAdmin React.
-
-## License
-
-TailAdmin React.js Free Version is released under the MIT License.
-
-## Support
-
-If you find this project helpful, please consider giving it a star on GitHub. Your support helps us continue developing
-and maintaining this template.
+Para mais informações, entre em contato com [seu-email@exemplo.com](mailto:seu-email@exemplo.com).

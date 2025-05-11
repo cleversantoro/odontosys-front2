@@ -1,11 +1,10 @@
 // Componente Financeiro com filtros dinâmicos, gráficos, exportações e CRUD
 import React, { useEffect, useState } from 'react';
+import PageBreadcrumb from "../../components/common/PageBreadCrumb";
+import PageMeta from "../../components/common/PageMeta";
+
 import api from '../../services/api';
-import {
-  Container, Card, Table, Form, Row, Col,
-  Button, Spinner, Modal
-} from 'react-bootstrap';
-import ContentHeader from '../../components/share/ContentHeader';
+
 import Select from 'react-select';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -240,210 +239,276 @@ const Financeiro = () => {
   const formatarValor = (valor) => valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
   return (
-    <Container>
-      <ContentHeader title="Financeiro" />
+    <>
+      <PageMeta
+        title="OdontoSys | Dashboard de Clínica Odontológica em React.js"
+        description="Esta é a página do Dashboard da Clínica Odontológica OdontoSys, desenvolvido com React.js e Tailwind CSS"
+      />
+      <PageBreadcrumb pageTitle="Financeiro" />
 
-      <Row className="mb-3">
-        <Col md={4}>
-          <Card className="text-center p-3">
-            <h6>Total Geral</h6>
-            <h5>{formatarValor(totalGeral)}</h5>
-          </Card>
-        </Col>
-        <Col md={4}>
-          <Card className="text-center p-3">
-            <h6>Total Pago</h6>
-            <h5 className="text-success">{formatarValor(totalPago)}</h5>
-          </Card>
-        </Col>
-        <Col md={4}>
-          <Card className="text-center p-3">
-            <h6>Pagamentos Encontrados</h6>
-            <h5>{quantidadePagamentos}</h5>
-          </Card>
-        </Col>
-      </Row>
 
-      <Form className="mb-3">
-        <Row>
-          <Col md={4}>
-            <Form.Label>Paciente</Form.Label>
-            <Select options={pacientesOptions} isClearable onChange={(opt) => setFiltro(prev => ({ ...prev, pacienteId: opt?.value || null }))} />
-          </Col>
-          <Col md={4}>
-            <Form.Label>Profissional</Form.Label>
-            <Select options={profissionaisOptions} isClearable onChange={(opt) => setFiltro(prev => ({ ...prev, profissionalId: opt?.value || null }))} />
-          </Col>
-          <Col md={4}>
-            <Form.Label>Período</Form.Label>
-            <Row>
-              <Col><Form.Control type="date" onChange={e => setFiltro(prev => ({ ...prev, dataInicio: e.target.value }))} /></Col>
-              <Col><Form.Control type="date" onChange={e => setFiltro(prev => ({ ...prev, dataFim: e.target.value }))} /></Col>
-            </Row>
-          </Col>
-        </Row>
-      </Form>
+          <div className="container mx-auto px-12 py-12">
 
-      <Row className="mb-3">
-        <Col md={6}>
-          <Card className="p-3">
-            <h6>Total por Tipo de Pagamento</h6>
-            <ResponsiveContainer width="100%" height={200}>
-              <PieChart>
-                <Pie data={dadosTipo} dataKey="value" nameKey="name" outerRadius={70}>
-                  {dadosTipo.map((entry, index) => <Cell key={index} fill={cores[index % cores.length]} />)}
-                </Pie>
-                <Tooltip />
-                <Legend />
-              </PieChart>
-            </ResponsiveContainer>
-          </Card>
-        </Col>
-        <Col md={6}>
-          <Card className="p-3">
-            <h6>Total por Status</h6>
-            <ResponsiveContainer width="100%" height={200}>
-              <BarChart data={dadosStatus}>
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="value" fill="#8884d8" />
-              </BarChart>
-            </ResponsiveContainer>
-          </Card>
-        </Col>
-      </Row>
-
-      <Card className="p-3 mb-4">
-        <div className="d-flex justify-content-between align-items-center">
-          <h5>Pagamentos</h5>
-          <div>
-            <Button variant="outline-success" size="sm" className="me-2" onClick={exportarExcel}>Exportar Excel</Button>
-            <Button variant="outline-danger" size="sm" className="me-2" onClick={exportarPDF}>Exportar PDF</Button>
-            <Button onClick={abrirModalNovo}>Incluir +</Button>
-          </div>
-        </div>
-      </Card>
-
-      {loading ? (
-        <Spinner animation="border" className="d-block mx-auto" />
-      ) : (
-        <>
-          <Table striped bordered hover responsive size="sm">
-            <thead>
-              <tr>
-                <th onClick={() => ordenar('pacienteId')} style={{ cursor: 'pointer' }}>Paciente{renderSetaOrdenacao('pacienteId')}</th>
-                <th onClick={() => ordenar('profissionalId')} style={{ cursor: 'pointer' }}>Profissional{renderSetaOrdenacao('profissionalId')}</th>
-                <th onClick={() => ordenar('valor')} style={{ cursor: 'pointer' }}>Valor{renderSetaOrdenacao('valor')}</th>
-                <th onClick={() => ordenar('data')} style={{ cursor: 'pointer' }}>Data{renderSetaOrdenacao('data')}</th>
-                <th onClick={() => ordenar('tipoPagamento')} style={{ cursor: 'pointer' }}>Tipo{renderSetaOrdenacao('tipoPagamento')}</th>
-                <th onClick={() => ordenar('status')} style={{ cursor: 'pointer' }}>Status{renderSetaOrdenacao('status')}</th>
-                <th>Ações</th>
-              </tr>
-            </thead>
-            <tbody>
-              {pagamentosPaginados.map((p) => (
-                <tr key={p.id}>
-                  <td>{p.paciente?.nome || `#${p.pacienteId}`}</td>
-                  <td>{p.profissional?.nome || `#${p.profissionalId}`}</td>
-                  <td>{formatarValor(p.valor)}</td>
-                  <td>{formatarData(p.data)}</td>
-                  <td>{p.tipoPagamento}</td>
-                  <td className={p.status === 'Pago' ? 'text-success fw-bold' : 'text-warning fw-bold'}>{p.status}</td>
-                  <td>
-                    <Button variant="outline-primary" size="sm" onClick={() => handleEditarPagamento(p)} className="me-2">✏️</Button>
-                    <Button variant="outline-danger" size="sm" onClick={() => handleExcluirPagamento(p.id)} className="me-2">🗑️</Button>
-                    {p.status === 'Pendente' && (
-                      <Button variant="outline-success" size="sm" onClick={() => atualizarStatus(p.id, 'Pago')} title="Marcar como Pago">✅</Button>
-                    )}
-                    {p.status === 'Pago' && (
-                      <Button variant="outline-warning" size="sm" onClick={() => atualizarStatus(p.id, 'Pendente')} title="Marcar como Pendente">🚫</Button>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </Table>
-
-          <div className="d-flex justify-content-between align-items-center">
-            <div className="mt-2">
-              <strong>Total Geral:</strong> {formatarValor(totalGeral)} |{' '}
-              <strong>Pago:</strong> <span className="text-success">{formatarValor(totalPago)}</span> |{' '}
-              <strong>Pendente:</strong> <span className="text-warning">{formatarValor(totalPendente)}</span>
+            {/* Cards superiores */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+              <div className="bg-white shadow rounded p-4 text-center">
+                <h6 className="text-sm font-semibold">Total Geral</h6>
+                <h5 className="text-xl font-bold">{formatarValor(totalGeral)}</h5>
+              </div>
+              <div className="bg-white shadow rounded p-4 text-center">
+                <h6 className="text-sm font-semibold">Total Pago</h6>
+                <h5 className="text-xl font-bold text-green-500">{formatarValor(totalPago)}</h5>
+              </div>
+              <div className="bg-white shadow rounded p-4 text-center">
+                <h6 className="text-sm font-semibold">Pagamentos Encontrados</h6>
+                <h5 className="text-xl font-bold">{quantidadePagamentos}</h5>
+              </div>
             </div>
-            <div className="mt-2">
-              <Button variant="light" size="sm" onClick={() => mudarPagina(paginaAtual - 1)} disabled={paginaAtual === 1}>Anterior</Button>{' '}
-              <span className="mx-2">Página {paginaAtual} de {totalPaginas}</span>{' '}
-              <Button variant="light" size="sm" onClick={() => mudarPagina(paginaAtual + 1)} disabled={paginaAtual === totalPaginas}>Próxima</Button>
+
+            {/* Formulário de Filtros */}
+            <div className="bg-white shadow rounded p-4 mb-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-1">Paciente</label>
+                  <Select
+                    options={pacientesOptions}
+                    isClearable
+                    onChange={(opt) => setFiltro(prev => ({ ...prev, pacienteId: opt?.value || null }))}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Profissional</label>
+                  <Select
+                    options={profissionaisOptions}
+                    isClearable
+                    onChange={(opt) => setFiltro(prev => ({ ...prev, profissionalId: opt?.value || null }))}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Período</label>
+                  <div className="flex gap-2">
+                    <input type="date" className="border px-2 py-1 rounded w-full"
+                      onChange={e => setFiltro(prev => ({ ...prev, dataInicio: e.target.value }))} />
+                    <input type="date" className="border px-2 py-1 rounded w-full"
+                      onChange={e => setFiltro(prev => ({ ...prev, dataFim: e.target.value }))} />
+                  </div>
+                </div>
+              </div>
             </div>
+
+            {/* Gráficos */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <div className="bg-white shadow rounded p-4">
+                <h6 className="text-center font-semibold mb-2">Total por Tipo de Pagamento</h6>
+                <ResponsiveContainer width="100%" height={200}>
+                  <PieChart>
+                    <Pie data={dadosTipo} dataKey="value" nameKey="name" outerRadius={70}>
+                      {dadosTipo.map((entry, index) => (
+                        <Cell key={index} fill={cores[index % cores.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                    <Legend />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+              <div className="bg-white shadow rounded p-4">
+                <h6 className="text-center font-semibold mb-2">Total por Status</h6>
+                <ResponsiveContainer width="100%" height={200}>
+                  <BarChart data={dadosStatus}>
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Bar dataKey="value" fill="#8884d8" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            {/* Cabeçalho dos Pagamentos */}
+            <div className="bg-white shadow rounded p-4 mb-4 flex justify-between items-center">
+              <h5 className="text-lg font-semibold">Pagamentos</h5>
+              <div className="flex gap-2">
+                <button className="border border-green-500 text-green-500 hover:bg-green-500 hover:text-white rounded px-3 py-1 text-sm"
+                  onClick={exportarExcel}>Exportar Excel</button>
+                <button className="border border-red-500 text-red-500 hover:bg-red-500 hover:text-white rounded px-3 py-1 text-sm"
+                  onClick={exportarPDF}>Exportar PDF</button>
+                <button className="bg-blue-500 text-white hover:bg-blue-600 rounded px-3 py-1 text-sm"
+                  onClick={abrirModalNovo}>Incluir +</button>
+              </div>
+            </div>
+
+            {/* Loader */}
+            {loading ? (
+              <div className="flex justify-center py-4">
+                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-blue-500"></div>
+              </div>
+            ) : (
+              <>
+                {/* Tabela de Pagamentos */}
+                <div className="overflow-auto mb-2">
+                  <table className="w-full border-collapse table-auto text-sm">
+                    <thead className="bg-gray-200">
+                      <tr>
+                        {['Paciente', 'Profissional', 'Valor', 'Data', 'Tipo', 'Status'].map((title, idx) => (
+                          <th key={idx}
+                            className="border px-2 py-1 cursor-pointer"
+                            onClick={() => ordenar(['pacienteId', 'profissionalId', 'valor', 'data', 'tipoPagamento', 'status'][idx])}
+                          >
+                            {title}{renderSetaOrdenacao(['pacienteId', 'profissionalId', 'valor', 'data', 'tipoPagamento', 'status'][idx])}
+                          </th>
+                        ))}
+                        <th className="border px-2 py-1">Ações</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {pagamentosPaginados.map((p) => (
+                        <tr key={p.id} className="text-center">
+                          <td className="border px-2 py-1">{p.paciente?.nome || `#${p.pacienteId}`}</td>
+                          <td className="border px-2 py-1">{p.profissional?.nome || `#${p.profissionalId}`}</td>
+                          <td className="border px-2 py-1">{formatarValor(p.valor)}</td>
+                          <td className="border px-2 py-1">{formatarData(p.data)}</td>
+                          <td className="border px-2 py-1">{p.tipoPagamento}</td>
+                          <td className={`border px-2 py-1 font-semibold ${p.status === 'Pago' ? 'text-green-500' : 'text-yellow-500'}`}>{p.status}</td>
+                          <td className="border px-2 py-1 flex justify-center gap-1">
+                            <button className="text-blue-500 hover:text-blue-700" onClick={() => handleEditarPagamento(p)}>✏️</button>
+                            <button className="text-red-500 hover:text-red-700" onClick={() => handleExcluirPagamento(p.id)}>🗑️</button>
+                            {p.status === 'Pendente' && (
+                              <button className="text-green-500" onClick={() => atualizarStatus(p.id, 'Pago')}>✅</button>
+                            )}
+                            {p.status === 'Pago' && (
+                              <button className="text-yellow-500" onClick={() => atualizarStatus(p.id, 'Pendente')}>🚫</button>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Paginação e Totais */}
+                <div className="flex justify-between items-center">
+                  <div className="text-sm">
+                    <strong>Total Geral:</strong> {formatarValor(totalGeral)} |{' '}
+                    <strong>Pago:</strong> <span className="text-green-500">{formatarValor(totalPago)}</span> |{' '}
+                    <strong>Pendente:</strong> <span className="text-yellow-500">{formatarValor(totalPendente)}</span>
+                  </div>
+                  <div className="text-sm">
+                    <button className="border rounded px-2" disabled={paginaAtual === 1}
+                      onClick={() => mudarPagina(paginaAtual - 1)}>Anterior</button>
+                    <span className="mx-2">Página {paginaAtual} de {totalPaginas}</span>
+                    <button className="border rounded px-2" disabled={paginaAtual === totalPaginas}
+                      onClick={() => mudarPagina(paginaAtual + 1)}>Próxima</button>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
-        </>
-      )}
 
+          {/* Modal de cadastro/edição permanece o mesmo */}
+          {showModal && (
+            <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
+              <div className="bg-white rounded-lg shadow-xl w-full max-w-lg">
+                <div className="flex justify-between items-center border-b px-4 py-2">
+                  <h3 className="text-lg font-semibold">
+                    {modoEdicao ? 'Editar Pagamento' : 'Novo Pagamento'}
+                  </h3>
+                  <button onClick={() => setShowModal(false)} className="text-gray-500 hover:text-gray-800 text-2xl">
+                    &times;
+                  </button>
+                </div>
 
-      {/* Modal de cadastro/edição permanece o mesmo */}
-      <Modal show={showModal} onHide={() => setShowModal(false)}>
-        <Modal.Header closeButton>
-          <Modal.Title>{modoEdicao ? 'Editar Pagamento' : 'Novo Pagamento'}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form>
-            <Row className="mb-2">
-              <Col>
-                <Form.Label>Paciente</Form.Label>
-                <Select
-                  options={pacientesOptions}
-                  value={pacientesOptions.find(opt => opt.value === novoPagamento.pacienteId) || null}
-                  onChange={(opt) => setNovoPagamento(prev => ({ ...prev, pacienteId: opt?.value }))}
-                />
-              </Col>
-              <Col>
-                <Form.Label>Profissional</Form.Label>
-                <Select
-                  options={profissionaisOptions}
-                  value={profissionaisOptions.find(opt => opt.value === novoPagamento.profissionalId) || null}
-                  onChange={(opt) => setNovoPagamento(prev => ({ ...prev, profissionalId: opt?.value }))}
-                />
-              </Col>
-            </Row>
-            <Row className="mb-2">
-              <Col>
-                <Form.Label>Valor</Form.Label>
-                <Form.Control type="number" value={novoPagamento.valor} onChange={(e) => setNovoPagamento({ ...novoPagamento, valor: e.target.value })} />
-              </Col>
-              <Col>
-                <Form.Label>Data</Form.Label>
-                <Form.Control type="date" value={novoPagamento.data} onChange={(e) => setNovoPagamento({ ...novoPagamento, data: e.target.value })} />
-              </Col>
-            </Row>
-            <Row className="mb-2">
-              <Col>
-                <Form.Label>Tipo de Pagamento</Form.Label>
-                <Form.Select value={novoPagamento.tipoPagamento} onChange={(e) => setNovoPagamento({ ...novoPagamento, tipoPagamento: e.target.value })}>
-                  <option value="">Selecione</option>
-                  <option value="Particular">Particular</option>
-                  <option value="Convênio">Convênio</option>
-                  <option value="Comissão">Comissão</option>
-                </Form.Select>
-              </Col>
-              <Col>
-                <Form.Label>Status</Form.Label>
-                <Form.Select value={novoPagamento.status} onChange={(e) => setNovoPagamento({ ...novoPagamento, status: e.target.value })}>
-                  <option value="">Selecione</option>
-                  <option value="Pendente">Pendente</option>
-                  <option value="Pago">Pago</option>
-                </Form.Select>
-              </Col>
-            </Row>
-          </Form>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowModal(false)}>Cancelar</Button>
-          <Button variant="primary" onClick={handleSalvarPagamento}>Salvar</Button>
-        </Modal.Footer>
-      </Modal>
-    </Container>
+                <div className="p-4 space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Paciente</label>
+                      <Select
+                        options={pacientesOptions}
+                        value={pacientesOptions.find(opt => opt.value === novoPagamento.pacienteId) || null}
+                        onChange={(opt) => setNovoPagamento(prev => ({ ...prev, pacienteId: opt?.value }))}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Profissional</label>
+                      <Select
+                        options={profissionaisOptions}
+                        value={profissionaisOptions.find(opt => opt.value === novoPagamento.profissionalId) || null}
+                        onChange={(opt) => setNovoPagamento(prev => ({ ...prev, profissionalId: opt?.value }))}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Valor</label>
+                      <input
+                        type="number"
+                        value={novoPagamento.valor}
+                        onChange={(e) => setNovoPagamento({ ...novoPagamento, valor: e.target.value })}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Data</label>
+                      <input
+                        type="date"
+                        value={novoPagamento.data}
+                        onChange={(e) => setNovoPagamento({ ...novoPagamento, data: e.target.value })}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Tipo de Pagamento</label>
+                      <select
+                        value={novoPagamento.tipoPagamento}
+                        onChange={(e) => setNovoPagamento({ ...novoPagamento, tipoPagamento: e.target.value })}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+                      >
+                        <option value="">Selecione</option>
+                        <option value="Particular">Particular</option>
+                        <option value="Convênio">Convênio</option>
+                        <option value="Comissão">Comissão</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Status</label>
+                      <select
+                        value={novoPagamento.status}
+                        onChange={(e) => setNovoPagamento({ ...novoPagamento, status: e.target.value })}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+                      >
+                        <option value="">Selecione</option>
+                        <option value="Pendente">Pendente</option>
+                        <option value="Pago">Pago</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex justify-end gap-2 border-t px-4 py-2">
+                  <button
+                    onClick={() => setShowModal(false)}
+                    className="bg-gray-400 text-white hover:bg-gray-500 px-4 py-2 rounded-md"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    onClick={handleSalvarPagamento}
+                    className="bg-blue-500 text-white hover:bg-blue-600 px-4 py-2 rounded-md"
+                  >
+                    Salvar
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+       
+    </>
   );
 };
 

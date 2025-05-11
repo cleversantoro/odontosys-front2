@@ -1,9 +1,15 @@
 import { useEffect, useState } from "react";
+import PageMeta from "../../components/common/PageMeta";
+
+import listPlugin from "@fullcalendar/list";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
-import listPlugin from "@fullcalendar/list";
+//import { EventInput, DateSelectArg, EventClickArg } from "@fullcalendar/core";
+
+import { Modal } from "../../components/ui/modal";
+
 import esLocale from '@fullcalendar/core/locales/pt-br';
 import api from '../../services/api';
 
@@ -13,6 +19,7 @@ const Agendamentos = () => {
     const [filtroProfissional, setFiltroProfissional] = useState('');
     const [consultasOriginais, setConsultasOriginais] = useState([]);
     const [showModal, setShowModal] = useState(false);
+
     const [formData, setFormData] = useState({
         pacienteId: '',
         profissionalId: '',
@@ -85,6 +92,24 @@ const Agendamentos = () => {
         }
     };
 
+//   const handleDateSelect = (selectInfo: DateSelectArg) => {
+//     resetModalFields();
+//     setEventStartDate(selectInfo.startStr);
+//     setEventEndDate(selectInfo.endStr || selectInfo.startStr);
+//     openModal();
+//   };
+
+//   const handleEventClick = (clickInfo: EventClickArg) => {
+//     const event = clickInfo.event;
+//     setSelectedEvent(event as unknown as CalendarEvent);
+//     setEventTitle(event.title);
+//     setEventStartDate(event.start?.toISOString().split("T")[0] || "");
+//     setEventEndDate(event.end?.toISOString().split("T")[0] || "");
+//     setEventLevel(event.extendedProps.calendar);
+//     //openModal();
+//     setShowModal(true);
+//   };
+
     const handleSaveConsulta = async () => {
         const dataCompleta = `${formData.data}T${formData.hora}:00.000Z`;
         const payload = {
@@ -106,118 +131,140 @@ const Agendamentos = () => {
     };
 
     return (
-        <div className="p-4">
-            <div className="flex flex-col md:flex-row gap-4 mb-4">
-                <input
-                    type="text"
-                    placeholder="Filtrar por paciente"
-                    value={filtroPaciente}
-                    onChange={(e) => {
-                        const valor = e.target.value;
-                        setFiltroPaciente(valor);
-                        setEventos(filtrarConsultas(consultasOriginais, valor, filtroProfissional));
-                    }}
-                    className="w-full md:w-1/3 p-2 border border-gray-300 rounded"
-                />
-                <input
-                    type="text"
-                    placeholder="Filtrar por profissional"
-                    value={filtroProfissional}
-                    onChange={(e) => {
-                        const valor = e.target.value;
-                        setFiltroProfissional(valor);
-                        setEventos(filtrarConsultas(consultasOriginais, filtroPaciente, valor));
-                    }}
-                    className="w-full md:w-1/3 p-2 border border-gray-300 rounded"
-                />
-            </div>
-
+        <>
+            <PageMeta
+                title="OdontoSys | Dashboard de Clínica Odontológica em React.js"
+                description="Esta é a página do Dashboard da Clínica Odontológica OdontoSys, desenvolvido com React.js e Tailwind CSS"
+            />
             <div className="rounded-2xl border  border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
-
                 <div className="custom-calendar">
-                    <FullCalendar
-                        height="75vh"
-                        locale={esLocale}
-                        firstDay={7}
-                        plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin, listPlugin]}
-                        headerToolbar={{
-                            left: "prev,next,today",
-                            center: "title",
-                            right: "dayGridMonth,timeGridWeek,timeGridDay,listMonth",
-                        }}
-                        initialView="dayGridMonth"
-                        editable={true}
-                        selectable={true}
-                        selectMirror={true}
-                        dayMaxEvents={true}
-                        select={handleDateClick}
-                        eventClick={handleEventClick}
-                        events={eventos}
-                    />
-                </div>
-            </div>
+                    <div className="flex flex-col md:flex-row gap-4 mb-4">
+                        <input
+                            type="text"
+                            placeholder="Filtrar por paciente"
+                            value={filtroPaciente}
+                            onChange={(e) => {
+                                const valor = e.target.value;
+                                setFiltroPaciente(valor);
+                                setEventos(filtrarConsultas(consultasOriginais, valor, filtroProfissional));
+                            }}
+                            className="w-full md:w-1/3 p-2 border border-gray-300 rounded"
+                        />
+                        <input
+                            type="text"
+                            placeholder="Filtrar por profissional"
+                            value={filtroProfissional}
+                            onChange={(e) => {
+                                const valor = e.target.value;
+                                setFiltroProfissional(valor);
+                                setEventos(filtrarConsultas(consultasOriginais, filtroPaciente, valor));
+                            }}
+                            className="w-full md:w-1/3 p-2 border border-gray-300 rounded"
+                        />
+                    </div>
 
-            {/* Modal */}
-            {showModal && (
-                <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-                    <div className="bg-white p-6 rounded shadow-md w-full max-w-lg">
-                        <h2 className="text-xl font-semibold mb-4">Nova Consulta</h2>
+                    <div className="rounded-2xl border  border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
 
-                        <div className="space-y-3">
-                            <input
-                                type="number"
-                                placeholder="Paciente ID"
-                                value={formData.pacienteId}
-                                onChange={(e) => setFormData({ ...formData, pacienteId: e.target.value })}
-                                className="w-full p-2 border border-gray-300 rounded"
+                        <div className="custom-calendar">
+                            <FullCalendar
+                                height="75vh"
+                                locale={esLocale}
+                                firstDay={7}
+                                plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin, listPlugin]}
+                                headerToolbar={{
+                                    left: "prev,next,today",
+                                    center: "title",
+                                    right: "dayGridMonth,timeGridWeek,timeGridDay,listMonth",
+                                }}
+                                initialView="dayGridMonth"
+                                editable={true}
+                                selectable={true}
+                                selectMirror={true}
+                                dayMaxEvents={true}
+                                select={handleDateClick}
+                                eventClick={handleEventClick}
+                                events={eventos}
                             />
-                            <input
-                                type="number"
-                                placeholder="Profissional ID"
-                                value={formData.profissionalId}
-                                onChange={(e) => setFormData({ ...formData, profissionalId: e.target.value })}
-                                className="w-full p-2 border border-gray-300 rounded"
-                            />
-                            <input
-                                type="date"
-                                value={formData.data}
-                                onChange={(e) => setFormData({ ...formData, data: e.target.value })}
-                                className="w-full p-2 border border-gray-300 rounded"
-                            />
-                            <input
-                                type="time"
-                                value={formData.hora}
-                                onChange={(e) => setFormData({ ...formData, hora: e.target.value })}
-                                className="w-full p-2 border border-gray-300 rounded"
-                            />
-                            <textarea
-                                rows={3}
-                                placeholder="Observações"
-                                value={formData.obs}
-                                onChange={(e) => setFormData({ ...formData, obs: e.target.value })}
-                                className="w-full p-2 border border-gray-300 rounded"
-                            />
-                        </div>
-
-                        <div className="flex justify-end gap-2 mt-4">
-                            <button
-                                onClick={() => setShowModal(false)}
-                                className="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400"
-                            >
-                                Cancelar
-                            </button>
-                            <button
-                                onClick={handleSaveConsulta}
-                                className="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700"
-                            >
-                                Salvar
-                            </button>
                         </div>
                     </div>
+
+                    {/* Modal */}
+                    {showModal && (
+                        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+                            <div className="bg-white p-6 rounded shadow-md w-full max-w-lg">
+                                <h2 className="text-xl font-semibold mb-4">Nova Consulta</h2>
+
+                                <div className="space-y-3">
+                                    <input
+                                        type="number"
+                                        placeholder="Paciente ID"
+                                        value={formData.pacienteId}
+                                        onChange={(e) => setFormData({ ...formData, pacienteId: e.target.value })}
+                                        className="w-full p-2 border border-gray-300 rounded"
+                                    />
+                                    <input
+                                        type="number"
+                                        placeholder="Profissional ID"
+                                        value={formData.profissionalId}
+                                        onChange={(e) => setFormData({ ...formData, profissionalId: e.target.value })}
+                                        className="w-full p-2 border border-gray-300 rounded"
+                                    />
+                                    <input
+                                        type="date"
+                                        value={formData.data}
+                                        onChange={(e) => setFormData({ ...formData, data: e.target.value })}
+                                        className="w-full p-2 border border-gray-300 rounded"
+                                    />
+                                    <input
+                                        type="time"
+                                        value={formData.hora}
+                                        onChange={(e) => setFormData({ ...formData, hora: e.target.value })}
+                                        className="w-full p-2 border border-gray-300 rounded"
+                                    />
+                                    <textarea
+                                        rows={3}
+                                        placeholder="Observações"
+                                        value={formData.obs}
+                                        onChange={(e) => setFormData({ ...formData, obs: e.target.value })}
+                                        className="w-full p-2 border border-gray-300 rounded"
+                                    />
+                                </div>
+
+                                <div className="flex justify-end gap-2 mt-4">
+                                    <button
+                                        onClick={() => setShowModal(false)}
+                                        className="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400"
+                                    >
+                                        Cancelar
+                                    </button>
+                                    <button
+                                        onClick={handleSaveConsulta}
+                                        className="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700"
+                                    >
+                                        Salvar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
-            )}
-        </div>
+            </div>
+        </>
+
     );
 };
+
+// const renderEventContent = (eventInfo: any) => {
+//     const colorClass = `fc-bg-${eventInfo.event.extendedProps.calendar.toLowerCase()}`;
+//     return (
+//         <div
+//             className={`event-fc-color flex fc-event-main ${colorClass} p-1 rounded-sm`}
+//         >
+//             <div className="fc-daygrid-event-dot"></div>
+//             <div className="fc-event-time">{eventInfo.timeText}</div>
+//             <div className="fc-event-title">{eventInfo.event.title}</div>
+//         </div>
+//     );
+// };
 
 export default Agendamentos;

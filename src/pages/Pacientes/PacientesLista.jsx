@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Table, Button, Container, Pagination, Form } from "react-bootstrap";
+import PageBreadcrumb from "../../components/common/PageBreadCrumb";
+import PageMeta from "../../components/common/PageMeta";
+
 import { useNavigate } from "react-router-dom";
 import api from "../../services/api";
 import PacienteDetalhesModal from "./PacienteDetalhes";
-import ToastConfirmacao from "../../components/share/ToastConfirmacao";
-import ContentHeader from "../../components/share/ContentHeader";
 import "./cadastroPaciente.css";
 
 export default function PacientesLista() {
@@ -13,7 +13,7 @@ export default function PacientesLista() {
   const [showModalDetalhes, setShowModalDetalhes] = useState(false);
   const [toastDelete, setToastDelete] = useState({ show: false, id: null });
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(10); 
+  const [itemsPerPage] = useState(10);
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
 
@@ -52,59 +52,93 @@ export default function PacientesLista() {
 
   return (
     <>
-      <ContentHeader title="Pacientes" />
-      <Container className="mt-4">
-        <div className="d-flex justify-content-between mb-3 align-items-center">
-          <h2>Lista de Pacientes</h2>
-          <Button onClick={() => navigate('/pacientes/cadastrar')}>+ Novo Paciente</Button>
+
+      <PageMeta
+        title="OdontoSys | Dashboard de Clínica Odontológica em React.js"
+        description="Esta é a página do Dashboard da Clínica Odontológica OdontoSys, desenvolvido com React.js e Tailwind CSS"
+      />
+      <PageBreadcrumb pageTitle="Pacientes" />
+
+      <div className="grid grid-cols-1 lg:grid-cols-1 gap-1">
+        <div className="flex justify-between items-center mb-4">
+          <button
+            className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-md"
+            onClick={() => navigate('/pacientes/cadastrar')}
+          >
+            + Novo Paciente
+          </button>
         </div>
 
-        <Form.Group className="mb-3">
-          <Form.Control
+        <div className="mb-4">
+          <input
             type="text"
             placeholder="Buscar por nome..."
             value={searchTerm}
             onChange={(e) => {
               setSearchTerm(e.target.value);
-              setCurrentPage(1); // Reseta para página 1 na busca
+              setCurrentPage(1);
             }}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
           />
-        </Form.Group>
+        </div>
 
-        <Table striped bordered hover>
-          <thead>
-            <tr>
-              <th>Nome</th>
-              <th>Email</th>
-              <th>Nascimento</th>
-              <th>Sexo</th>
-              <th>Ações</th>
-            </tr>
-          </thead>
-          <tbody>
-            {currentItems.map((p) => (
-              <tr key={p.id}>
-                <td>{p.nome}</td>
-                <td>{p.email}</td>
-                <td>{new Date(p.dataNascimento).toLocaleDateString()}</td>
-                <td>{p.sexo}</td>
-                <td>
-                  <Button variant="info" size="sm" onClick={() => { setPacienteSelecionado(p); setShowModalDetalhes(true); }}>Visualizar</Button>{" "}
-                  <Button variant="warning" size="sm" onClick={() => navigate(`/pacientes/cadastrar/${p.id}`)}>Editar</Button>{" "}
-                  <Button variant="danger" size="sm" onClick={() => setToastDelete({ show: true, id: p.id })}>Excluir</Button>
-                </td>
+        <div className="overflow-auto mb-4">
+          <table className="min-w-full border-collapse table-auto text-sm">
+            <thead className="bg-gray-200">
+              <tr>
+                <th className="border px-3 py-2">Nome</th>
+                <th className="border px-3 py-2">Email</th>
+                <th className="border px-3 py-2">Nascimento</th>
+                <th className="border px-3 py-2">Sexo</th>
+                <th className="border px-3 py-2">Ações</th>
               </tr>
-            ))}
-          </tbody>
-        </Table>
+            </thead>
+            <tbody>
+              {currentItems.map((p) => (
+                <tr key={p.id} className="text-center">
+                  <td className="border px-2 py-1">{p.nome}</td>
+                  <td className="border px-2 py-1">{p.email}</td>
+                  <td className="border px-2 py-1">{new Date(p.dataNascimento).toLocaleDateString()}</td>
+                  <td className="border px-2 py-1">{p.sexo}</td>
+                  <td className="border px-2 py-1 flex gap-1 justify-center">
+                    <button
+                      className="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded-md text-xs"
+                      onClick={() => { setPacienteSelecionado(p); setShowModalDetalhes(true); }}
+                    >
+                      Visualizar
+                    </button>
+                    <button
+                      className="bg-yellow-500 hover:bg-yellow-600 text-white px-2 py-1 rounded-md text-xs"
+                      onClick={() => navigate(`/pacientes/cadastrar/${p.id}`)}
+                    >
+                      Editar
+                    </button>
+                    <button
+                      className="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded-md text-xs"
+                      onClick={() => setToastDelete({ show: true, id: p.id })}
+                    >
+                      Excluir
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
 
-        <Pagination className="justify-content-center">
-          {[...Array(Math.ceil(filteredPacientes.length / itemsPerPage)).keys()].map(number => (
-            <Pagination.Item key={number + 1} onClick={() => paginate(number + 1)} active={number + 1 === currentPage}>
-              {number + 1}
-            </Pagination.Item>
-          ))}
-        </Pagination>
+        <div className="flex justify-center mt-4">
+          <nav className="inline-flex rounded-md shadow-sm">
+            {[...Array(Math.ceil(filteredPacientes.length / itemsPerPage)).keys()].map(number => (
+              <button
+                key={number + 1}
+                className={`px-3 py-1 border border-gray-300 ${currentPage === number + 1 ? 'bg-blue-500 text-white' : 'bg-white text-gray-700'} hover:bg-blue-500 hover:text-white`}
+                onClick={() => paginate(number + 1)}
+              >
+                {number + 1}
+              </button>
+            ))}
+          </nav>
+        </div>
 
         {showModalDetalhes && (
           <PacienteDetalhesModal
@@ -114,13 +148,15 @@ export default function PacientesLista() {
           />
         )}
 
-        <ToastConfirmacao
-          show={toastDelete.show}
-          onHide={() => setToastDelete({ show: false, id: null })}
-          onConfirm={handleDeleteConfirm}
-          mensagem="Tem certeza que deseja excluir este paciente?"
-        />
-      </Container>
+        {/* <ToastConfirmacao
+                  show={toastDelete.show}
+                  onHide={() => setToastDelete({ show: false, id: null })}
+                  onConfirm={handleDeleteConfirm}
+                  mensagem="Tem certeza que deseja excluir este paciente?"
+                /> */}
+
+      </div>
+
     </>
   );
 }

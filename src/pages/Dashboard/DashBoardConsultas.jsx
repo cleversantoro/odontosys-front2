@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import api from '../../services/api';
+import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import PageMeta from "../../components/common/PageMeta";
+
+import api from '../../services/api';
 import {
     BarChart, Bar, LineChart, Line, PieChart, Pie, Cell,
     XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
@@ -111,87 +113,93 @@ export default function DashboardConsultas() {
                 title="OdontoSys | Dashboard de Clínica Odontológica em React.js"
                 description="Esta é a página do Dashboard da Clínica Odontológica OdontoSys, desenvolvido com React.js e Tailwind CSS"
             />
+            <PageBreadcrumb pageTitle="DashBoard Consultas" />
+            <div className="min-h-screen rounded-2xl border border-gray-200 bg-white px-5 py-7 dark:border-gray-800 dark:bg-white/[0.03] xl:px-10 xl:py-12">
+                <div className="mx-auto w-full max-w-[630px] text-center"></div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] sm:p-6">
-                <Card title="Agendamentos vs Consultas por Dia">
-                    <BarChart data={dailyStats()}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="date" />
-                        <YAxis />
-                        <Tooltip />
-                        <Legend />
-                        <Bar dataKey="Agendamento" fill="#8884d8" />
-                        <Bar dataKey="Consulta" fill="#82ca9d" />
-                    </BarChart>
-                </Card>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
+                    <Card title="Agendamentos vs Consultas por Dia">
+                        <BarChart data={dailyStats()}>
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis dataKey="date" />
+                            <YAxis />
+                            <Tooltip />
+                            <Legend />
+                            <Bar dataKey="Agendamento" fill="#8884d8" />
+                            <Bar dataKey="Consulta" fill="#82ca9d" />
+                        </BarChart>
+                    </Card>
 
-                <Card title="Status dos Agendamentos">
-                    <PieChart>
-                        <Pie data={consultasPorStatus} dataKey="value" nameKey="name" outerRadius={80} label>
-                            {consultasPorStatus.map((_, index) => <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />)}
-                        </Pie>
-                        <Tooltip />
-                    </PieChart>
-                </Card>
+                    <Card title="Status dos Agendamentos">
+                        <PieChart>
+                            <Pie data={consultasPorStatus} dataKey="value" nameKey="name" outerRadius={80} label>
+                                {consultasPorStatus.map((_, index) => <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />)}
+                            </Pie>
+                            <Tooltip />
+                        </PieChart>
+                    </Card>
 
-                <Card title="Consultas por Profissional">
-                    <BarChart data={consultasPorProfissional} layout="vertical">
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis type="number" />
-                        <YAxis dataKey="name" type="category" />
-                        <Tooltip />
-                        <Bar dataKey="value" fill="#ffc658" />
-                    </BarChart>            </Card>
+                    <Card title="Consultas por Profissional">
+                        <BarChart data={consultasPorProfissional} layout="vertical">
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis type="number" />
+                            <YAxis dataKey="name" type="category" />
+                            <Tooltip />
+                            <Bar dataKey="value" fill="#ffc658" />
+                        </BarChart>            </Card>
 
-                <Card title="Consultas por Paciente">
-                    <BarChart data={consultasPorPaciente} layout="vertical">
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis type="number" />
-                        <YAxis dataKey="name" type="category" />
-                        <Tooltip />
-                        <Bar dataKey="value" fill="#ff7300" />
-                    </BarChart>
-                </Card>
+                    <Card title="Consultas por Paciente">
+                        <BarChart data={consultasPorPaciente} layout="vertical">
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis type="number" />
+                            <YAxis dataKey="name" type="category" />
+                            <Tooltip />
+                            <Bar dataKey="value" fill="#ff7300" />
+                        </BarChart>
+                    </Card>
 
-                <Card title="Consultas por Faixa Horária">
-                    <BarChart data={faixaHoraria()}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="name" />
-                        <YAxis />
-                        <Tooltip />
-                        <Bar dataKey="value" fill="#a4de6c" />
-                    </BarChart>
-                </Card>
+                    <Card title="Consultas por Faixa Horária">
+                        <BarChart data={faixaHoraria()}>
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis dataKey="name" />
+                            <YAxis />
+                            <Tooltip />
+                            <Bar dataKey="value" fill="#a4de6c" />
+                        </BarChart>
+                    </Card>
 
-                <Card title="Evolução de Consultas por Mês">
-                    <LineChart data={consultasPorMes()}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="name" />
-                        <YAxis />
-                        <Tooltip />
-                        <Line type="monotone" dataKey="value" stroke="#8884d8" />
-                    </LineChart>
-                </Card>
+                    <Card title="Evolução de Consultas por Mês">
+                        <LineChart data={consultasPorMes()}>
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis dataKey="name" />
+                            <YAxis />
+                            <Tooltip />
+                            <Line type="monotone" dataKey="value" stroke="#8884d8" />
+                        </LineChart>
+                    </Card>
 
-                <Card title="Taxa de Comparecimento">
-                    <PieChart>
-                        <Pie
-                            data={taxaComparecimento()}
-                            cx="50%"
-                            cy="50%"
-                            labelLine={false}
-                            label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}
-                            outerRadius={100}
-                            fill="#8884d8"
-                            dataKey="value">
-                            {taxaComparecimento().map((_, index) => (
-                                <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
-                            ))}
-                        </Pie>
-                        <Tooltip />
-                    </PieChart>
-                </Card>
+                    <Card title="Taxa de Comparecimento">
+                        <PieChart>
+                            <Pie
+                                data={taxaComparecimento()}
+                                cx="50%"
+                                cy="50%"
+                                labelLine={false}
+                                label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}
+                                outerRadius={100}
+                                fill="#8884d8"
+                                dataKey="value">
+                                {taxaComparecimento().map((_, index) => (
+                                    <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
+                                ))}
+                            </Pie>
+                            <Tooltip />
+                        </PieChart>
+                    </Card>
+                </div>
+
             </div>
+
         </>
     );
 };

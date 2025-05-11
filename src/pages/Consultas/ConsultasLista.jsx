@@ -1,5 +1,9 @@
+// Arquivo adaptado para uso com TailwindCSS e sem react-bootstrap
+
 import React, { useEffect, useState } from 'react';
-import { Table, Button, Container, Modal, Form, Row, Col } from 'react-bootstrap';
+import PageBreadcrumb from "../../components/common/PageBreadCrumb";
+import PageMeta from "../../components/common/PageMeta";
+
 import { FaEdit, FaTrash, FaPlus } from 'react-icons/fa';
 import api from '../../services/api';
 
@@ -7,10 +11,7 @@ import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-
 import debounce from 'lodash/debounce';
-
-
 
 export default function ConsultasLista() {
   const [consultas, setConsultas] = useState([]);
@@ -72,11 +73,11 @@ export default function ConsultasLista() {
   };
 
   const handleSave = async () => {
-    const dataCompleta = `${formData.data}T${formData.hora}:00.000Z`;
+    //const dataCompleta = ${formData.data}T${formData.hora}:00.000Z;
     const payload = { ...formData, data: dataCompleta };
     try {
       if (consultaSelecionada) {
-        await api.put(`/consultas/${consultaSelecionada.id}`, payload);
+        await api.put("/consultas/${consultaSelecionada.id}", payload);
       } else {
         await api.post('/consultas', payload);
       }
@@ -90,7 +91,7 @@ export default function ConsultasLista() {
   const handleDelete = async (id) => {
     if (window.confirm('Deseja excluir esta consulta?')) {
       try {
-        await api.delete(`/consultas/${id}`);
+        await api.delete("/consultas/${id}");
         carregarConsultas();
       } catch (error) {
         console.error('Erro ao excluir consulta:', error);
@@ -150,7 +151,7 @@ export default function ConsultasLista() {
 
   const buscarPacientes = debounce(async (termo) => {
     try {
-      const res = await api.get(`/pacientes?search=${termo}`);
+      const res = await api.get("/pacientes?search=${termo}");
       setSugestoesPacientes(res.data);
     } catch (error) {
       console.error('Erro ao buscar pacientes:', error);
@@ -159,7 +160,7 @@ export default function ConsultasLista() {
 
   const buscarProfissionais = debounce(async (termo) => {
     try {
-      const res = await api.get(`/profissionais?search=${termo}`);
+      const res = await api.get("/profissionais?search=${termo}");
       setSugestoesProfissionais(res.data);
     } catch (error) {
       console.error('Erro ao buscar profissionais:', error);
@@ -167,150 +168,94 @@ export default function ConsultasLista() {
   }, 500);
 
 
+
+  useEffect(() => {
+    carregarConsultas();
+  }, []);
+
   const totalPaginas = Math.ceil(consultasFiltradas.length / registrosPorPagina);
 
   return (
-    <Container className="mt-4">
-      <h4>Consultas</h4>
+    <>
 
-      <Row className="mb-3">
-        <Col><Form.Control placeholder="Paciente" value={filtros.nomePaciente} onChange={e => setFiltros({ ...filtros, nomePaciente: e.target.value })} /></Col>
-        <Col><Form.Control placeholder="Profissional" value={filtros.nomeProfissional} onChange={e => setFiltros({ ...filtros, nomeProfissional: e.target.value })} /></Col>
-        <Col><Form.Select value={filtros.status} onChange={e => setFiltros({ ...filtros, status: e.target.value })}>
-          <option value="">Todos os status</option>
-          <option value="Agendado">Agendado</option>
-          <option value="Concluído">Concluído</option>
-          <option value="Cancelado">Cancelado</option>
-        </Form.Select></Col>
-      </Row>
-
-      <div className="text-end mb-3 d-flex justify-content-end gap-2">
-        <Button variant="success" onClick={exportarExcel}>Exportar Excel</Button>
-        <Button variant="danger" onClick={exportarPDF}>Exportar PDF</Button>
-        <Button variant="primary" onClick={() => handleOpenModal()}><FaPlus /> Nova Consulta</Button>
-      </div>
+      <PageMeta
+        title="OdontoSys | Dashboard de Clínica Odontológica em React.js"
+        description="Esta é a página do Dashboard da Clínica Odontológica OdontoSys, desenvolvido com React.js e Tailwind CSS"
+      />
+      <PageBreadcrumb pageTitle="Consultas" />
 
 
-      <Table striped bordered hover responsive>
-        <thead className="bg-primary text-white">
-          <tr>
-            <th>#</th>
-            <th>Paciente</th>
-            <th>Idade</th>
-            <th>Convênio</th>
-            <th>Profissional</th>
-            <th>Especialidades</th>
-            <th>Departamento</th>
-            <th>Data</th>
-            <th>Hora</th>
-            <th>Status</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          {consultasPaginadas.map((c, index) => (
-            <tr key={c.id}>
-              <td>{index + 1}</td>
-              <td>{c.nome_paciente}</td>
-              <td>{c.dataNascimento ? calcularIdade(c.dataNascimento) : '-'}</td>
-              <td>{c.convenio || '-'}</td>
-              <td>{c.nome_profissional}</td>
-              <td>{c.especialidades || '-'}</td>
-              <td>{c.departamentos || '-'}</td>
-              <td>{new Date(c.data_agendamento).toLocaleDateString()}</td>
-              <td>{new Date(c.data_agendamento).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</td>
-              <td>{c.situacao}</td>
-              <td className="d-flex gap-2 justify-content-center">
-                <Button size="sm" variant="outline-primary" onClick={() => handleOpenModal(c)}><FaEdit /></Button>
-                <Button size="sm" variant="outline-danger" onClick={() => handleDelete(c.id)}><FaTrash /></Button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </Table>
+          <div className="p-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+              <input className="border rounded px-3 py-2" placeholder="Paciente" value={filtros.nomePaciente} onChange={e => setFiltros({ ...filtros, nomePaciente: e.target.value })} />
+              <input className="border rounded px-3 py-2" placeholder="Profissional" value={filtros.nomeProfissional} onChange={e => setFiltros({ ...filtros, nomeProfissional: e.target.value })} />
+              <select className="border rounded px-3 py-2" value={filtros.status} onChange={e => setFiltros({ ...filtros, status: e.target.value })}>
+                <option value="">Todos os status</option>
+                <option value="Agendado">Agendado</option>
+                <option value="Concluído">Concluído</option>
+                <option value="Cancelado">Cancelado</option>
+              </select>
+            </div>
 
-      <div className="d-flex justify-content-between align-items-center">
-        <span>Página {paginaAtual} de {totalPaginas}</span>
-        <div>
-          <Button size="sm" disabled={paginaAtual === 1} onClick={() => setPaginaAtual(p => p - 1)}>Anterior</Button>{' '}
-          <Button size="sm" disabled={paginaAtual === totalPaginas} onClick={() => setPaginaAtual(p => p + 1)}>Próxima</Button>
-        </div>
-      </div>
+            <div className="flex justify-end gap-2 mb-4">
+              <button onClick={() => { }} className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded">Exportar Excel</button>
+              <button onClick={() => { }} className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded">Exportar PDF</button>
+              <button onClick={() => setShowModal(true)} className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded flex items-center gap-2"><FaPlus /> Nova Consulta</button>
+            </div>
 
-      <Modal show={showModal} onHide={handleCloseModal}>
-        <Modal.Header closeButton><Modal.Title>Consulta</Modal.Title></Modal.Header>
-        <Modal.Body>
-          <Form>
+            <div className="overflow-x-auto">
+              <table className="min-w-full border">
+                <thead className="bg-blue-500 text-white">
+                  <tr>
+                    <th className="px-2 py-1 border">#</th>
+                    <th className="px-2 py-1 border">Paciente</th>
+                    <th className="px-2 py-1 border">Idade</th>
+                    <th className="px-2 py-1 border">Convênio</th>
+                    <th className="px-2 py-1 border">Profissional</th>
+                    <th className="px-2 py-1 border">Especialidades</th>
+                    <th className="px-2 py-1 border">Departamento</th>
+                    <th className="px-2 py-1 border">Data</th>
+                    <th className="px-2 py-1 border">Hora</th>
+                    <th className="px-2 py-1 border">Status</th>
+                    <th className="px-2 py-1 border">Ações</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {consultasPaginadas.map((c, index) => (
+                    <tr key={c.id} className="hover:bg-gray-100">
+                      <td className="px-2 py-1 border">{index + 1}</td>
+                      <td className="px-2 py-1 border">{c.nome_paciente}</td>
+                      <td className="px-2 py-1 border">{c.dataNascimento ? calcularIdade(c.dataNascimento) : '-'}</td>
+                      <td className="px-2 py-1 border">{c.convenio || '-'}</td>
+                      <td className="px-2 py-1 border">{c.nome_profissional}</td>
+                      <td className="px-2 py-1 border">{c.especialidades || '-'}</td>
+                      <td className="px-2 py-1 border">{c.departamentos || '-'}</td>
+                      <td className="px-2 py-1 border">{new Date(c.data_agendamento).toLocaleDateString()}</td>
+                      <td className="px-2 py-1 border">{new Date(c.data_agendamento).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</td>
+                      <td className="px-2 py-1 border">{c.situacao}</td>
+                      <td className="px-2 py-1 border text-center space-x-2">
+                        <button className="text-blue-600 hover:underline" onClick={() => setShowModal(true)}><FaEdit /></button>
+                        <button className="text-red-600 hover:underline" onClick={() => { }}><FaTrash /></button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
 
-            <Form.Group className="mb-2">
-              <Form.Label>Paciente</Form.Label>
-              <Form.Control
-                type="text"
-                value={formData.nomePaciente || ''}
-                onChange={(e) => {
-                  const nome = e.target.value;
-                  setFormData({ ...formData, nomePaciente: nome });
-                  buscarPacientes(nome);
-                }}
-                list="listaPacientes"
-                placeholder="Digite para buscar"
-              />
-              <datalist id="listaPacientes">
-                {sugestoesPacientes.map((p) => (
-                  <option key={p.id} value={p.nome} onClick={() => setFormData({ ...formData, pacienteId: p.id })} />
-                ))}
-              </datalist>
-            </Form.Group>
+            <div className="flex justify-between items-center mt-4">
+              <span>Página {paginaAtual} de {totalPaginas}</span>
+              <div className="space-x-2">
+                <button className="px-3 py-1 border rounded disabled:opacity-50" disabled={paginaAtual === 1} onClick={() => setPaginaAtual(p => p - 1)}>Anterior</button>
+                <button className="px-3 py-1 border rounded disabled:opacity-50" disabled={paginaAtual === totalPaginas} onClick={() => setPaginaAtual(p => p + 1)}>Próxima</button>
+              </div>
+            </div>
+
+            {/* Modal será substituído posteriormente por componente Tailwind */}
+          </div>
 
 
-            <Form.Group className="mb-2">
-              <Form.Label>Profissional</Form.Label>
-              <Form.Control
-                type="text"
-                value={formData.nomeProfissional || ''}
-                onChange={(e) => {
-                  const nome = e.target.value;
-                  setFormData({ ...formData, nomeProfissional: nome });
-                  buscarProfissionais(nome);
-                }}
-                list="listaProfissionais"
-                placeholder="Digite para buscar"
-              />
-              <datalist id="listaProfissionais">
-                {sugestoesProfissionais.map((p) => (
-                  <option key={p.id} value={p.nome} onClick={() => setFormData({ ...formData, profissionalId: p.id })} />
-                ))}
-              </datalist>
-            </Form.Group>
+    </>
 
-
-            <Form.Group className="mb-2">
-              <Form.Label>Data</Form.Label>
-              <Form.Control type="date" value={formData.data} onChange={e => setFormData({ ...formData, data: e.target.value })} />
-            </Form.Group>
-            <Form.Group className="mb-2">
-              <Form.Label>Hora</Form.Label>
-              <Form.Control type="time" value={formData.hora} onChange={e => setFormData({ ...formData, hora: e.target.value })} />
-            </Form.Group>
-            <Form.Group className="mb-2">
-              <Form.Label>Status</Form.Label>
-              <Form.Select value={formData.status} onChange={e => setFormData({ ...formData, status: e.target.value })}>
-                <option>Agendado</option>
-                <option>Concluído</option>
-                <option>Cancelado</option>
-              </Form.Select>
-            </Form.Group>
-            <Form.Group className="mb-2">
-              <Form.Label>Observações</Form.Label>
-              <Form.Control as="textarea" rows={2} value={formData.obs} onChange={e => setFormData({ ...formData, obs: e.target.value })} />
-            </Form.Group>
-          </Form>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseModal}>Cancelar</Button>
-          <Button variant="primary" onClick={handleSave}>Salvar</Button>
-        </Modal.Footer>
-      </Modal>
-    </Container>
   );
 }

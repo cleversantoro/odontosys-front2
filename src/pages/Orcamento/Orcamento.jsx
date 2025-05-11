@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
-import { Container, Row, Col, Form, Button, Table, Modal } from 'react-bootstrap';
+import PageBreadcrumb from "../../components/common/PageBreadCrumb";
+import PageMeta from "../../components/common/PageMeta";
+
+//import { Container, Row, Col, Form, Button, Table, Modal } from 'react-bootstrap';
 //import ContentHeader from '../../components/share/ContentHeader';
-import imgLogoBase64 from '../../app/img/logoBase64';
+//import imgLogoBase64 from '../../app/img/logoBase64';
 //import { gerarPDFMake } from './gerarPDFMake';
 
 import jsPDF from 'jspdf';
@@ -56,18 +59,18 @@ const Orcamento = () => {
         const gerarTabelaServicos = (yStart) => {
             if (servicosSelecionados.length === 0) return null;
 
-            const tableResult = 
-            autoTable(doc, {
-                startY: yStart,
-                head: [['Quantidade', 'Serviço', 'Valor Unitário (R$)', 'Subtotal (R$)']],
-                body: servicosSelecionados.map(item => [
-                    item.quantidade,
-                    item.descricao,
-                    item.valor.toFixed(2),
-                    (item.quantidade * item.valor).toFixed(2),
-                ]),
-                theme: 'grid'
-            });
+            const tableResult =
+                autoTable(doc, {
+                    startY: yStart,
+                    head: [['Quantidade', 'Serviço', 'Valor Unitário (R$)', 'Subtotal (R$)']],
+                    body: servicosSelecionados.map(item => [
+                        item.quantidade,
+                        item.descricao,
+                        item.valor.toFixed(2),
+                        (item.quantidade * item.valor).toFixed(2),
+                    ]),
+                    theme: 'grid'
+                });
 
             return tableResult;
         };
@@ -112,119 +115,77 @@ const Orcamento = () => {
 
 
     return (
-        <Container className="mt-4">
-            {/* <ContentHeader title="Orçamento" /> */}
+        <>
+            <PageMeta
+                title="OdontoSys | Dashboard de Clínica Odontológica em React.js"
+                description="Esta é a página do Dashboard da Clínica Odontológica OdontoSys, desenvolvido com React.js e Tailwind CSS"
+            />
+            <PageBreadcrumb pageTitle="Orçamento" />
 
-            <Row className="align-items-end mb-3">
-                <Col md={3}>
-                    <Form.Group>
-                        <Form.Label>Data</Form.Label>
-                        <Form.Control
+
+            <div className="container mx-auto mt-4 p-4">
+                <div className="flex items-end gap-4 mb-4">
+                    <div className="flex-1">
+                        <label className="block mb-1">Data</label>
+                        <input
                             type="date"
+                            className="border p-2 rounded w-full"
                             value={formData.orcamentoData}
                             onChange={(e) => setFormData(prev => ({ ...prev, orcamentoData: e.target.value }))}
                         />
-                    </Form.Group>
-                </Col>
-                <Col md="auto">
-                    <Button variant="success" onClick={() => setShowModal(true)}>Incluir Serviço +</Button>
-                </Col>
-                <Col md="auto">
-                    <Button variant="primary" onClick={gerarPDF}>Gerar PDF</Button>
-                </Col>
-                <Col md="auto">
-                    <Button variant="warning" onClick={limparFormulario}>Novo Orçamento</Button>
-                </Col>
-            </Row>
+                    </div>
+                    <button className="px-4 py-2 bg-green-500 text-white rounded" onClick={() => setShowModal(true)}>Incluir Serviço +</button>
+                    <button className="px-4 py-2 bg-blue-500 text-white rounded" onClick={gerarPDF}>Gerar PDF</button>
+                    <button className="px-4 py-2 bg-yellow-500 text-white rounded" onClick={limparFormulario}>Novo Orçamento</button>
+                </div>
 
-            <Table bordered hover responsive size="sm">
-                <thead className="table-primary">
-                    <tr>
-                        <th>QUANT</th>
-                        <th>SERVIÇO</th>
-                        <th>VALOR (R$)</th>
-                        <th>SUBTOTAL (R$)</th>
-                        <th>AÇÕES</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {servicosSelecionados.length > 0 ? (
-                        servicosSelecionados.map((item, index) => (
-                            <tr key={index}>
-                                <td>{item.quantidade}</td>
-                                <td>{item.descricao}</td>
-                                <td>{item.valor.toFixed(2)}</td>
-                                <td>{(item.valor * item.quantidade).toFixed(2)}</td>
-                                <td>
-                                    <Button variant="danger" size="sm" onClick={() => handleRemoverServico(index)}>Remover</Button>
-                                </td>
-                            </tr>
-                        ))
-                    ) : (
+                <table className="w-full border-collapse border border-gray-300 mb-4">
+                    <thead className="bg-blue-200">
                         <tr>
-                            <td colSpan="5" className="text-center">Nenhum serviço adicionado</td>
+                            <th className="border border-gray-300 p-2">QUANT</th>
+                            <th className="border border-gray-300 p-2">SERVIÇO</th>
+                            <th className="border border-gray-300 p-2">VALOR (R$)</th>
+                            <th className="border border-gray-300 p-2">SUBTOTAL (R$)</th>
+                            <th className="border border-gray-300 p-2">AÇÕES</th>
                         </tr>
-                    )}
-                </tbody>
-            </Table>
+                    </thead>
+                    <tbody>
+                        {servicosSelecionados.length > 0 ? (
+                            servicosSelecionados.map((item, index) => (
+                                <tr key={index}>
+                                    <td className="border border-gray-300 p-2 text-center">{item.quantidade}</td>
+                                    <td className="border border-gray-300 p-2">{item.descricao}</td>
+                                    <td className="border border-gray-300 p-2 text-right">{item.valor.toFixed(2)}</td>
+                                    <td className="border border-gray-300 p-2 text-right">{(item.valor * item.quantidade).toFixed(2)}</td>
+                                    <td className="border border-gray-300 p-2 text-center">
+                                        <button className="px-2 py-1 bg-red-500 text-white rounded" onClick={() => handleRemoverServico(index)}>Remover</button>
+                                    </td>
+                                </tr>
+                            ))
+                        ) : (
+                            <tr>
+                                <td colSpan="5" className="border border-gray-300 p-4 text-center">Nenhum serviço adicionado</td>
+                            </tr>
+                        )}
+                    </tbody>
+                </table>
 
-            <div className="mb-4">
-                <h5>Total: R$ {calcularTotal().toFixed(2)}</h5>
+                <div className="mb-4">
+                    <h5 className="font-semibold">Total: R$ {calcularTotal().toFixed(2)}</h5>
+                </div>
+
+                <div className="mb-3">
+                    <label className="block mb-1">Formas de Pagamento</label>
+                    <textarea
+                        rows={3}
+                        className="border p-2 rounded w-full"
+                        value={formData.formasPagamento}
+                        onChange={(e) => setFormData(prev => ({ ...prev, formasPagamento: e.target.value }))}
+                    />
+                </div>
             </div>
 
-            <Form.Group className="mb-3">
-                <Form.Label>Formas de Pagamento</Form.Label>
-                <Form.Control
-                    as="textarea"
-                    rows={3}
-                    value={formData.formasPagamento}
-                    onChange={(e) => setFormData(prev => ({ ...prev, formasPagamento: e.target.value }))}
-                />
-            </Form.Group>
-
-            <Modal show={showModal} onHide={() => setShowModal(false)}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Adicionar Serviço</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <Form.Group className="mb-3">
-                        <Form.Label>Serviço</Form.Label>
-                        <Form.Select
-                            value={novoServico.descricao}
-                            onChange={(e) => setNovoServico(prev => ({ ...prev, descricao: e.target.value }))}
-                        >
-                            <option value="">Selecione...</option>
-                            {servicos.map((servico, idx) => (
-                                <option key={idx} value={servico}>{servico}</option>
-                            ))}
-                        </Form.Select>
-                    </Form.Group>
-                    <Form.Group className="mb-3">
-                        <Form.Label>Quantidade</Form.Label>
-                        <Form.Control
-                            type="number"
-                            min="1"
-                            value={novoServico.quantidade}
-                            onChange={(e) => setNovoServico(prev => ({ ...prev, quantidade: parseInt(e.target.value) || 1 }))}
-                        />
-                    </Form.Group>
-                    <Form.Group className="mb-3">
-                        <Form.Label>Valor Unitário (R$)</Form.Label>
-                        <Form.Control
-                            type="number"
-                            min="0"
-                            step="0.01"
-                            value={novoServico.valor}
-                            onChange={(e) => setNovoServico(prev => ({ ...prev, valor: parseFloat(e.target.value) || 0 }))}
-                        />
-                    </Form.Group>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={() => setShowModal(false)}>Cancelar</Button>
-                    <Button variant="success" onClick={handleAdicionarServico}>Adicionar</Button>
-                </Modal.Footer>
-            </Modal>
-        </Container>
+        </>
     );
 };
 

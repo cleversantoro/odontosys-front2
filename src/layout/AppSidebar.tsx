@@ -2,12 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router";
 
 // Assume these icons are imported from an icon library
-import {
-  BoxIcon,
-  CalenderIcon, ChevronDownIcon,
-  DollarLineIcon, GridIcon, GroupIcon, HorizontaLDots, PencilIcon, PieChartIcon,
-  UserCircleIcon, UserIcon,
-} from "../icons";
+import { BiBox, BiCalendar, BiChevronDown, BiDollar, BiDotsHorizontal, BiGridAlt, BiGroup, BiPencil, BiPieChart, BiUser, BiUserCircle } from "react-icons/bi";
 
 import { useSidebar } from "../context/SidebarContext";
 //import SidebarWidget from "./SidebarWidget";
@@ -21,23 +16,23 @@ type NavItem = {
 
 const navItems: NavItem[] = [
   {
-    icon: <GridIcon />,
+    icon: <BiGridAlt  />,
     name: "Dashboard",
     subItems: [
       // { name: "Ecommerce", path: "/Home", pro: false },
-      { name: "DashBoard Consultas", path: "/DashBoardConsultas", pro: false },
+      { name: "DashBoard Consultas", path: "/DashboardConsultas", pro: false },
       { name: "DashBoard Despesas", path: "/DashboardDespesas", pro: false },
       { name: "Calendar", path: "/Calendar", pro: false },
     ],
   },
 
-  { icon: <CalenderIcon />, name: "Agendamentos", path: "/Agendamentos", },
-  { icon: <BoxIcon />, name: "Consultas", path: "/Consultas", },
-  { icon: <GroupIcon />, name: "Pacientes", path: "/Pacientes", },
-  { icon: <UserIcon />, name: "Profissionais", path: "/Profissionais", },
-  { icon: <PencilIcon />, name: "Orcamentos", path: "/Orcamentos", },
-  { icon: <DollarLineIcon />, name: "Financeiro", path: "/Financeiro", },
-  { icon: <UserCircleIcon />, name: "Seu Perfil", path: "/profile", },
+  { icon: <BiCalendar />, name: "Agendamentos", path: "/Agendamentos", },
+  { icon: <BiBox />, name: "Consultas", path: "/Consultas", },
+  { icon: <BiGroup />, name: "Pacientes", path: "/Pacientes", },
+  { icon: <BiUser />, name: "Profissionais", path: "/Profissionais", },
+  { icon: <BiPencil />, name: "Orcamentos", path: "/Orcamentos", },
+  { icon: <BiDollar />, name: "Financeiro", path: "/Financeiro", },
+  { icon: <BiUserCircle />, name: "Seu Perfil", path: "/profile", },
   // {
   //   icon: <ListIcon />, name: "Forms",
   //   subItems: [{ name: "Form Elements", path: "/form-elements", pro: false }],
@@ -61,7 +56,7 @@ const navItems: NavItem[] = [
 
 const othersItems: NavItem[] = [
   {
-    icon: <PieChartIcon />,
+    icon: <BiPieChart />,
     name: "Admin",
     subItems: [
       { name: "Usuarios", path: "/Usuarios", pro: false },
@@ -196,7 +191,7 @@ const AppSidebar: React.FC = () => {
                 <span className="menu-item-text">{nav.name}</span>
               )}
               {(isExpanded || isHovered || isMobileOpen) && (
-                <ChevronDownIcon
+                <BiChevronDown
                   className={`ml-auto w-5 h-5 transition-transform duration-200 ${openSubmenu?.type === menuType &&
                     openSubmenu?.index === index
                     ? "rotate-180 text-brand-500"
@@ -325,7 +320,7 @@ const AppSidebar: React.FC = () => {
               >
                 {isExpanded || isHovered || isMobileOpen
                   ? ("Menu")
-                  : (<HorizontaLDots className="size-6" />)}
+                  : (<BiDotsHorizontal className="size-6" />)}
               </h2>
               {renderMenuItems(navItems, "main")}
             </div>
@@ -338,7 +333,7 @@ const AppSidebar: React.FC = () => {
               >
                 {isExpanded || isHovered || isMobileOpen
                   ? ("Others")
-                  : (<HorizontaLDots className="size-6" />)}
+                  : (<BiDotsHorizontal className="size-6" />)}
               </h2>
               {renderMenuItems(othersItems, "others")}
             </div>

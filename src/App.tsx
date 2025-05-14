@@ -1,23 +1,13 @@
+import React, { ReactElement } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router";
 import SignIn from "./pages/AuthPages/SignIn";
 import SignUp from "./pages/AuthPages/SignUp";
-import NotFound from "./pages/OtherPage/NotFound";
+import NotFound from "./pages/Errors/NotFound";
 import UserProfiles from "./pages/Usuarios/UserProfiles";
-// import Videos from "./pages/UiElements/Videos";
-// import Images from "./pages/UiElements/Images";
-// import Alerts from "./pages/UiElements/Alerts";
-// import Badges from "./pages/UiElements/Badges";
-// import Avatars from "./pages/UiElements/Avatars";
-// import Buttons from "./pages/UiElements/Buttons";
-// import LineChart from "./pages/Charts/LineChart";
-// import BarChart from "./pages/Charts/BarChart";
-import Calendar from "./pages/Agendamento/Calendar";
-// import BasicTables from "./pages/Tables/BasicTables";
-// import FormElements from "./pages/Forms/FormElements";
-// import Blank from "./pages/Blank";
 import AppLayout from "./layout/AppLayout";
 import { ScrollToTop } from "./components/common/ScrollToTop";
-import Home from "./pages/Dashboard/Home";
+
+import Home from "./pages/Home/Home";
 import DashBoardConsultas from "./pages/Dashboard/DashboardConsultas";
 import DashBoardDespesas from "./pages/Dashboard/DashboardDespesas";
 import Agendamentos from "./pages/Agendamento/Agendamentos";
@@ -26,12 +16,13 @@ import PacientesLista from "./pages/Pacientes/PacientesLista";
 import ProfissionaisPage from "./pages/Profissionais/ProfissionaisPage";
 import Orcamento from "./pages/Orcamento/Orcamento";
 import Financeiro from "./pages/Financeiro/Financeiro";
-
-
+import Calendar from "./pages/Agendamento/Calendar";
 import { useAuth } from "./context/AuthContext";
-import Config from "./pages/Config/config";
+import Config from "./pages/Config/Config";
 
-const PrivateRoute = ({ children }: { children: JSX.Element }) => {
+
+
+const PrivateRoute = ({ children }: { children: ReactElement }) => {
   const { isAuthenticated } = useAuth();
   return isAuthenticated ? children : <Navigate to="/" />;
 };

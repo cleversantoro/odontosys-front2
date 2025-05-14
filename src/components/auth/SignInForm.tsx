@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router";
-import { EyeCloseIcon, EyeIcon } from "../../icons";
+import { FaRegEye, FaRegEyeSlash  } from "react-icons/fa";
 import Label from "../form/Label";
 import Input from "../form/input/InputField";
 import Checkbox from "../form/input/Checkbox";
@@ -138,8 +138,8 @@ export default function SignInForm() {
                       onClick={() => setShowPassword(!showPassword)}
                       className="absolute z-30 -translate-y-1/2 cursor-pointer right-4 top-1/2">
                       {showPassword
-                        ? (<EyeIcon className="fill-gray-500 dark:fill-gray-400 size-5" />)
-                        : (<EyeCloseIcon className="fill-gray-500 dark:fill-gray-400 size-5" />)
+                        ? (<FaRegEye className="fill-gray-500 dark:fill-gray-400 size-5" />)
+                        : (<FaRegEyeSlash className="fill-gray-500 dark:fill-gray-400 size-5" />)
                       }
                     </span>
                   </div>

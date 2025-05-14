@@ -4,14 +4,13 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
-
+import esLocale from '@fullcalendar/core/locales/pt-br';
 import { EventInput, DateSelectArg, EventClickArg } from "@fullcalendar/core";
+
 import { Modal } from "../../components/ui/modal";
 import { useModal } from "../../hooks/useModal";
 import PageMeta from "../../components/common/PageMeta";
-
-import esLocale from '@fullcalendar/core/locales/pt-br';
-import api from '../../services/api';
+import api from '../../services/api.js';
 
 
 interface CalendarEvent extends EventInput { extendedProps: { calendar: string; }; }
@@ -39,7 +38,6 @@ const Calendar: React.FC = () => {
   const [consultasOriginais, setConsultasOriginais] = useState([]);
   //const [showModal, setShowModal] = useState(false);
 
-
   const [formData, setFormData] = useState({
     pacienteId: '',
     profissionalId: '',
@@ -55,9 +53,6 @@ const Calendar: React.FC = () => {
     Primary: "primary",
     Warning: "warning",
   };
-
-
-
 
   useEffect(() => {
     carregarConsultas();
@@ -174,25 +169,25 @@ const Calendar: React.FC = () => {
     setSelectedEvent(null);
   };
 
-  const handleSaveConsulta = async () => {
-    const dataCompleta = `${formData.data}T${formData.hora}:00.000Z`;
-    const payload = {
-      pacienteId: Number(formData.pacienteId),
-      profissionalId: Number(formData.profissionalId),
-      data: dataCompleta,
-      status: formData.status,
-      obs: formData.obs
-    };
+  // const handleSaveConsulta = async () => {
+  //   const dataCompleta = `${formData.data}T${formData.hora}:00.000Z`;
+  //   const payload = {
+  //     pacienteId: Number(formData.pacienteId),
+  //     profissionalId: Number(formData.profissionalId),
+  //     data: dataCompleta,
+  //     status: formData.status,
+  //     obs: formData.obs
+  //   };
 
-    try {
-      await api.post('/agendamentos', payload);
-      await carregarConsultas(); // atualiza eventos
-      closeModal();
-    } catch (error) {
-      console.error('Erro ao salvar consulta:', error);
-      alert('Erro ao salvar consulta');
-    }
-  };
+  //   try {
+  //     await api.post('/agendamentos', payload);
+  //     await carregarConsultas(); // atualiza eventos
+  //     closeModal();
+  //   } catch (error) {
+  //     console.error('Erro ao salvar consulta:', error);
+  //     alert('Erro ao salvar consulta');
+  //   }
+  // };
 
   return (
     <>

@@ -7,12 +7,18 @@
     "checkJs": false,
     "moduleResolution": "node",
     "esModuleInterop": true,
+    "resolveJsonModule": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
-    "outDir": "dist",                    // Saída separada!
-    "noEmit": false                      // Permite gerar build
+    "outDir": "dist", // Saída separada!
+    "noEmit": false // Permite gerar build
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist"]
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
 }

@@ -1,7 +1,12 @@
 import { useState } from "react";
-import { Table, TableBody, TableCell, TableHeader, TableRow, } from "../../../ui/table";
-import { BiPencil, BiTrash } from "react-icons/bi";
-
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHeader,
+  TableRow,
+} from "../../../ui/table";
+import { PencilIcon, TrashBinIcon } from "../../../../icons";
 import Checkbox from "../../../form/input/Checkbox";
 import Badge from "../../../ui/badge/Badge";
 import Pagination from "./Pagination";
@@ -527,8 +532,8 @@ export default function DataTableThree() {
                         item.status === "Hired"
                           ? "success"
                           : item.status === "In Progress"
-                            ? "warning"
-                            : "error"
+                          ? "warning"
+                          : "error"
                       }
                     >
                       {item.status}
@@ -537,10 +542,10 @@ export default function DataTableThree() {
                   <TableCell className="px-4 py-4 font-normal text-gray-800 border border-gray-100 dark:border-white/[0.05] text-theme-sm dark:text-white/90 whitespace-nowrap">
                     <div className="flex items-center w-full gap-2">
                       <button className="text-gray-500 hover:text-error-500 dark:text-gray-400 dark:hover:text-error-500">
-                        <BiTrash className="size-5" />
+                        <TrashBinIcon className="size-5" />
                       </button>
                       <button className="text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-white/90">
-                        <BiPencil className="size-5" />
+                        <PencilIcon className="size-5" />
                       </button>
                     </div>
                   </TableCell>

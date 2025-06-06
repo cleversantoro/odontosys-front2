@@ -57,9 +57,12 @@ const Header: React.FC<HeaderProps> = ({ onClick, onToggle }) => {
             </svg>
             {/* Cross Icon */}
           </button>
+          
           <button
             onClick={onClick}
             className="items-center justify-center hidden w-10 h-10 text-gray-500 border-gray-200 rounded-lg z-99999 dark:border-gray-800 lg:flex dark:text-gray-400 lg:h-11 lg:w-11 lg:border"
+            title="Open main menu"
+            aria-label="Open main menu"
           >
             <svg
               className="hidden fill-current lg:block"
@@ -78,7 +81,7 @@ const Header: React.FC<HeaderProps> = ({ onClick, onToggle }) => {
             </svg>
           </button>
 
-          <Link to="/Home" className="lg:hidden">
+          <Link to="/" className="lg:hidden">
             <img
               className="dark:hidden"
               src="./images/logo/logo.svg"
@@ -91,10 +94,10 @@ const Header: React.FC<HeaderProps> = ({ onClick, onToggle }) => {
             />
           </Link>
 
-          <button
-            onClick={toggleApplicationMenu}
+          <button onClick={toggleApplicationMenu}
             className="flex items-center justify-center w-10 h-10 text-gray-700 rounded-lg z-99999 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800 lg:hidden"
-          >
+            title="Open application menu"
+            aria-label="Open application menu">
             <svg
               width="24"
               height="24"
@@ -114,15 +117,8 @@ const Header: React.FC<HeaderProps> = ({ onClick, onToggle }) => {
           <div className="hidden lg:block">
             <form action="https://formbold.com/s/unique_form_id" method="POST">
               <div className="relative">
-                <button className="absolute -translate-y-1/2 left-4 top-1/2">
-                  <svg
-                    className="fill-gray-500 dark:fill-gray-400"
-                    width="20"
-                    height="20"
-                    viewBox="0 0 20 20"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
+                <button className="absolute -translate-y-1/2 left-4 top-1/2" title="Search" aria-label="Search">
+                  <svg className="fill-gray-500 dark:fill-gray-400" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path
                       fillRule="evenodd"
                       clipRule="evenodd"
@@ -146,9 +142,8 @@ const Header: React.FC<HeaderProps> = ({ onClick, onToggle }) => {
           </div>
         </div>
         <div
-          className={`${
-            isApplicationMenuOpen ? "flex" : "hidden"
-          } items-center justify-between w-full gap-4 px-5 py-4 lg:flex shadow-theme-md lg:justify-end lg:px-0 lg:shadow-none`}
+          className={`${isApplicationMenuOpen ? "flex" : "hidden"
+            } items-center justify-between w-full gap-4 px-5 py-4 lg:flex shadow-theme-md lg:justify-end lg:px-0 lg:shadow-none`}
         >
           <div className="flex items-center gap-2 2xsm:gap-3">
             {/* <!-- Dark Mode Toggler --> */}

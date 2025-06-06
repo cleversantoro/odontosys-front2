@@ -2,6 +2,8 @@
 import React, { useEffect, useState } from 'react';
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import PageMeta from "../../components/common/PageMeta";
+import { Modal } from "../../components/ui/modal";
+import { useModal } from "../../hooks/useModal";
 
 import api from '../../services/api';
 
@@ -10,8 +12,11 @@ import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import * as XLSX from 'xlsx';
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { BiCheckbox, BiCheckboxChecked, BiCheckboxMinus, BiPencil, BiTrash, BiUpArrow, BiDownArrow } from 'react-icons/bi';
 
 const Financeiro = () => {
+  const { isOpen, openModal, closeModal } = useModal();
+
   const [pagamentos, setPagamentos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -124,7 +129,7 @@ const Financeiro = () => {
   const abrirModalNovo = () => {
     setNovoPagamento({ pacienteId: '', profissionalId: '', valor: '', tipoPagamento: '', status: '', data: '', registeredBy: 1 });
     setModoEdicao(false);
-    setShowModal(true);
+    openModal();
   };
 
   const handleEditarPagamento = (pagamento) => {
@@ -139,7 +144,8 @@ const Financeiro = () => {
     });
     setPagamentoSelecionado(pagamento);
     setModoEdicao(true);
-    setShowModal(true);
+    //setShowModal(true);
+    openModal();
   };
 
   const handleExcluirPagamento = async (id) => {
@@ -232,7 +238,7 @@ const Financeiro = () => {
 
   const renderSetaOrdenacao = (campo) => {
     if (ordenacao.campo !== campo) return '';
-    return ordenacao.direcao === 'asc' ? ' 🔼' : ' 🔽';
+    return ordenacao.direcao === 'asc' ? <BiUpArrow className="size-3"/> : <BiDownArrow className="size-3"/> ;
   };
 
   const formatarData = (data) => new Date(data).toLocaleDateString('pt-BR');
@@ -247,267 +253,273 @@ const Financeiro = () => {
       <PageBreadcrumb pageTitle="Financeiro" />
 
 
-          <div className="container mx-auto px-12 py-12">
+      <div className="container mx-auto px-12 py-12">
 
-            {/* Cards superiores */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-              <div className="bg-white shadow rounded p-4 text-center">
-                <h6 className="text-sm font-semibold">Total Geral</h6>
-                <h5 className="text-xl font-bold">{formatarValor(totalGeral)}</h5>
-              </div>
-              <div className="bg-white shadow rounded p-4 text-center">
-                <h6 className="text-sm font-semibold">Total Pago</h6>
-                <h5 className="text-xl font-bold text-green-500">{formatarValor(totalPago)}</h5>
-              </div>
-              <div className="bg-white shadow rounded p-4 text-center">
-                <h6 className="text-sm font-semibold">Pagamentos Encontrados</h6>
-                <h5 className="text-xl font-bold">{quantidadePagamentos}</h5>
-              </div>
+        {/* Cards superiores */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+          <div className="bg-white shadow rounded p-4 text-center">
+            <h6 className="text-sm font-semibold">Total Geral</h6>
+            <h5 className="text-xl font-bold">{formatarValor(totalGeral)}</h5>
+          </div>
+          <div className="bg-white shadow rounded p-4 text-center">
+            <h6 className="text-sm font-semibold">Total Pago</h6>
+            <h5 className="text-xl font-bold text-green-500">{formatarValor(totalPago)}</h5>
+          </div>
+          <div className="bg-white shadow rounded p-4 text-center">
+            <h6 className="text-sm font-semibold">Pagamentos Encontrados</h6>
+            <h5 className="text-xl font-bold">{quantidadePagamentos}</h5>
+          </div>
+        </div>
+
+        {/* Formulário de Filtros */}
+        <div className="bg-white shadow rounded p-4 mb-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-sm font-medium mb-1">Paciente</label>
+              <Select
+                options={pacientesOptions}
+                isClearable
+                onChange={(opt) => setFiltro(prev => ({ ...prev, pacienteId: opt?.value || null }))}
+              />
             </div>
-
-            {/* Formulário de Filtros */}
-            <div className="bg-white shadow rounded p-4 mb-4">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                  <label className="block text-sm font-medium mb-1">Paciente</label>
-                  <Select
-                    options={pacientesOptions}
-                    isClearable
-                    onChange={(opt) => setFiltro(prev => ({ ...prev, pacienteId: opt?.value || null }))}
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">Profissional</label>
-                  <Select
-                    options={profissionaisOptions}
-                    isClearable
-                    onChange={(opt) => setFiltro(prev => ({ ...prev, profissionalId: opt?.value || null }))}
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">Período</label>
-                  <div className="flex gap-2">
-                    <input type="date" className="border px-2 py-1 rounded w-full"
-                      onChange={e => setFiltro(prev => ({ ...prev, dataInicio: e.target.value }))} />
-                    <input type="date" className="border px-2 py-1 rounded w-full"
-                      onChange={e => setFiltro(prev => ({ ...prev, dataFim: e.target.value }))} />
-                  </div>
-                </div>
-              </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Profissional</label>
+              <Select
+                options={profissionaisOptions}
+                isClearable
+                onChange={(opt) => setFiltro(prev => ({ ...prev, profissionalId: opt?.value || null }))}
+              />
             </div>
-
-            {/* Gráficos */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-              <div className="bg-white shadow rounded p-4">
-                <h6 className="text-center font-semibold mb-2">Total por Tipo de Pagamento</h6>
-                <ResponsiveContainer width="100%" height={200}>
-                  <PieChart>
-                    <Pie data={dadosTipo} dataKey="value" nameKey="name" outerRadius={70}>
-                      {dadosTipo.map((entry, index) => (
-                        <Cell key={index} fill={cores[index % cores.length]} />
-                      ))}
-                    </Pie>
-                    <Tooltip />
-                    <Legend />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
-              <div className="bg-white shadow rounded p-4">
-                <h6 className="text-center font-semibold mb-2">Total por Status</h6>
-                <ResponsiveContainer width="100%" height={200}>
-                  <BarChart data={dadosStatus}>
-                    <XAxis dataKey="name" />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-                    <Bar dataKey="value" fill="#8884d8" />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
-
-            {/* Cabeçalho dos Pagamentos */}
-            <div className="bg-white shadow rounded p-4 mb-4 flex justify-between items-center">
-              <h5 className="text-lg font-semibold">Pagamentos</h5>
+            <div>
+              <label className="block text-sm font-medium mb-1">Período</label>
               <div className="flex gap-2">
-                <button className="border border-green-500 text-green-500 hover:bg-green-500 hover:text-white rounded px-3 py-1 text-sm"
-                  onClick={exportarExcel}>Exportar Excel</button>
-                <button className="border border-red-500 text-red-500 hover:bg-red-500 hover:text-white rounded px-3 py-1 text-sm"
-                  onClick={exportarPDF}>Exportar PDF</button>
-                <button className="bg-blue-500 text-white hover:bg-blue-600 rounded px-3 py-1 text-sm"
-                  onClick={abrirModalNovo}>Incluir +</button>
+                <input type="date" className="border px-2 py-1 rounded w-full"
+                  onChange={e => setFiltro(prev => ({ ...prev, dataInicio: e.target.value }))} />
+                <input type="date" className="border px-2 py-1 rounded w-full"
+                  onChange={e => setFiltro(prev => ({ ...prev, dataFim: e.target.value }))} />
               </div>
             </div>
+          </div>
+        </div>
 
-            {/* Loader */}
-            {loading ? (
-              <div className="flex justify-center py-4">
-                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-blue-500"></div>
+        {/* Gráficos */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div className="bg-white shadow rounded p-4">
+            <h6 className="text-center font-semibold mb-2">Total por Tipo de Pagamento</h6>
+            <ResponsiveContainer width="100%" height={200}>
+              <PieChart>
+                <Pie data={dadosTipo} dataKey="value" nameKey="name" outerRadius={70}>
+                  {dadosTipo.map((entry, index) => (
+                    <Cell key={index} fill={cores[index % cores.length]} />
+                  ))}
+                </Pie>
+                <Tooltip />
+                <Legend />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+          <div className="bg-white shadow rounded p-4">
+            <h6 className="text-center font-semibold mb-2">Total por Status</h6>
+            <ResponsiveContainer width="100%" height={200}>
+              <BarChart data={dadosStatus}>
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="value" fill="#8884d8" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        {/* Cabeçalho dos Pagamentos */}
+        <div className="bg-white shadow rounded p-4 mb-4 flex justify-between items-center">
+          <h5 className="text-lg font-semibold">Pagamentos</h5>
+          <div className="flex gap-2">
+            <button className="border border-green-500 text-green-500 hover:bg-green-500 hover:text-white rounded px-3 py-1 text-sm"
+              onClick={exportarExcel}>Exportar Excel</button>
+            <button className="border border-red-500 text-red-500 hover:bg-red-500 hover:text-white rounded px-3 py-1 text-sm"
+              onClick={exportarPDF}>Exportar PDF</button>
+            <button className="bg-blue-500 text-white hover:bg-blue-600 rounded px-3 py-1 text-sm"
+              onClick={abrirModalNovo}>Incluir +</button>
+          </div>
+        </div>
+
+        {/* Loader */}
+        {loading ? (
+          <div className="flex justify-center py-4">
+            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-blue-500"></div>
+          </div>
+        ) : (
+          <>
+            {/* Tabela de Pagamentos */}
+            <div className="overflow-auto mb-2">
+              <table className="w-full border-collapse table-auto text-sm">
+                <thead className="bg-blue-500 text-white">
+                  <tr>
+                    {['Paciente', 'Profissional', 'Valor', 'Data', 'Tipo', 'Status'].map((title, idx) => (
+                      <th key={idx} className="border px-2 py-1 cursor-pointer"
+                        onClick={() => ordenar(['pacienteId', 'profissionalId', 'valor', 'data', 'tipoPagamento', 'status'][idx])}>
+
+                        {title}{renderSetaOrdenacao(['pacienteId', 'profissionalId', 'valor', 'data', 'tipoPagamento', 'status'][idx])}
+
+                      </th>
+                    ))}
+                    <th className="border px-2 py-1">Ações</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {pagamentosPaginados.map((p) => (
+                    <tr key={p.id} className="text-center" >
+                      <td className="border px-2 py-1">{p.paciente?.nome || `#${p.pacienteId}`}</td>
+                      <td className="border px-2 py-1">{p.profissional?.nome || `#${p.profissionalId}`}</td>
+                      <td className="border px-2 py-1">{formatarValor(p.valor)}</td>
+                      <td className="border px-2 py-1">{formatarData(p.data)}</td>
+                      <td className="border px-2 py-1">{p.tipoPagamento}</td>
+                      <td className={`border px-2 py-1 font-semibold ${p.status === 'Pago' ? 'text-green-500' : 'text-yellow-500'}`}>{p.status}</td>
+
+                      <td className="border px-2 py-1 flex justify-center gap-1">
+                        <button className="text-blue-600 hover:text-blue-700 hover:underline" onClick={() => handleEditarPagamento(p)}><BiPencil className="size-5" /></button>
+                        <button className="text-red-600 hover:text-red-700 hover:underline" onClick={() => handleExcluirPagamento(p.id)}><BiTrash className="size-5" /></button>
+
+                        {p.status === 'Pendente' && (
+                          <button className="text-yellow-500" onClick={() => atualizarStatus(p.id, 'Pago')}><BiCheckbox className="size-6" /></button>
+                        )}
+
+                        {p.status === 'Pago' && (
+                          <button className="text-green-500" onClick={() => atualizarStatus(p.id, 'Pendente')}><BiCheckboxChecked className="size-6" /></button>
+                        )}
+                      </td>
+
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Paginação e Totais */}
+            <div className="flex justify-between items-center">
+              <div className="text-sm">
+                <strong>Total Geral:</strong> {formatarValor(totalGeral)} |{' '}
+                <strong>Pago:</strong> <span className="text-green-500">{formatarValor(totalPago)}</span> |{' '}
+                <strong>Pendente:</strong> <span className="text-yellow-500">{formatarValor(totalPendente)}</span>
               </div>
-            ) : (
-              <>
-                {/* Tabela de Pagamentos */}
-                <div className="overflow-auto mb-2">
-                  <table className="w-full border-collapse table-auto text-sm">
-                    <thead className="bg-gray-200">
-                      <tr>
-                        {['Paciente', 'Profissional', 'Valor', 'Data', 'Tipo', 'Status'].map((title, idx) => (
-                          <th key={idx}
-                            className="border px-2 py-1 cursor-pointer"
-                            onClick={() => ordenar(['pacienteId', 'profissionalId', 'valor', 'data', 'tipoPagamento', 'status'][idx])}
-                          >
-                            {title}{renderSetaOrdenacao(['pacienteId', 'profissionalId', 'valor', 'data', 'tipoPagamento', 'status'][idx])}
-                          </th>
-                        ))}
-                        <th className="border px-2 py-1">Ações</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {pagamentosPaginados.map((p) => (
-                        <tr key={p.id} className="text-center">
-                          <td className="border px-2 py-1">{p.paciente?.nome || `#${p.pacienteId}`}</td>
-                          <td className="border px-2 py-1">{p.profissional?.nome || `#${p.profissionalId}`}</td>
-                          <td className="border px-2 py-1">{formatarValor(p.valor)}</td>
-                          <td className="border px-2 py-1">{formatarData(p.data)}</td>
-                          <td className="border px-2 py-1">{p.tipoPagamento}</td>
-                          <td className={`border px-2 py-1 font-semibold ${p.status === 'Pago' ? 'text-green-500' : 'text-yellow-500'}`}>{p.status}</td>
-                          <td className="border px-2 py-1 flex justify-center gap-1">
-                            <button className="text-blue-500 hover:text-blue-700" onClick={() => handleEditarPagamento(p)}>✏️</button>
-                            <button className="text-red-500 hover:text-red-700" onClick={() => handleExcluirPagamento(p.id)}>🗑️</button>
-                            {p.status === 'Pendente' && (
-                              <button className="text-green-500" onClick={() => atualizarStatus(p.id, 'Pago')}>✅</button>
-                            )}
-                            {p.status === 'Pago' && (
-                              <button className="text-yellow-500" onClick={() => atualizarStatus(p.id, 'Pendente')}>🚫</button>
-                            )}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+              <div className="text-sm">
+                <button className="border rounded px-2" disabled={paginaAtual === 1}
+                  onClick={() => mudarPagina(paginaAtual - 1)}>Anterior</button>
+                <span className="mx-2">Página {paginaAtual} de {totalPaginas}</span>
+                <button className="border rounded px-2" disabled={paginaAtual === totalPaginas}
+                  onClick={() => mudarPagina(paginaAtual + 1)}>Próxima</button>
+              </div>
+            </div>
+          </>
+        )}
+      </div>
 
-                {/* Paginação e Totais */}
-                <div className="flex justify-between items-center">
-                  <div className="text-sm">
-                    <strong>Total Geral:</strong> {formatarValor(totalGeral)} |{' '}
-                    <strong>Pago:</strong> <span className="text-green-500">{formatarValor(totalPago)}</span> |{' '}
-                    <strong>Pendente:</strong> <span className="text-yellow-500">{formatarValor(totalPendente)}</span>
-                  </div>
-                  <div className="text-sm">
-                    <button className="border rounded px-2" disabled={paginaAtual === 1}
-                      onClick={() => mudarPagina(paginaAtual - 1)}>Anterior</button>
-                    <span className="mx-2">Página {paginaAtual} de {totalPaginas}</span>
-                    <button className="border rounded px-2" disabled={paginaAtual === totalPaginas}
-                      onClick={() => mudarPagina(paginaAtual + 1)}>Próxima</button>
-                  </div>
-                </div>
-              </>
-            )}
+      {/* Modal de cadastro/edição permanece o mesmo */}
+      <Modal isOpen={isOpen} onClose={closeModal} className="max-w-[584px] p-5 lg:p-10">
+        {/* {showModal && ( */}
+
+        <form className="">
+          <div className="mb-6 text-lg font-medium text-gray-800 dark:text-white/90">
+            <h3 className="text-lg font-semibold">{modoEdicao ? 'Editar Pagamento' : 'Novo Pagamento'}</h3>
+            {/* <button onClick={() => closeModal()} className="text-gray-500 hover:text-gray-800 text-2xl">&times;</button> */}
           </div>
 
-          {/* Modal de cadastro/edição permanece o mesmo */}
-          {showModal && (
-            <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
-              <div className="bg-white rounded-lg shadow-xl w-full max-w-lg">
-                <div className="flex justify-between items-center border-b px-4 py-2">
-                  <h3 className="text-lg font-semibold">
-                    {modoEdicao ? 'Editar Pagamento' : 'Novo Pagamento'}
-                  </h3>
-                  <button onClick={() => setShowModal(false)} className="text-gray-500 hover:text-gray-800 text-2xl">
-                    &times;
-                  </button>
-                </div>
+          <div className="grid grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-2">
+            {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-4"> */}
 
-                <div className="p-4 space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium mb-1">Paciente</label>
-                      <Select
-                        options={pacientesOptions}
-                        value={pacientesOptions.find(opt => opt.value === novoPagamento.pacienteId) || null}
-                        onChange={(opt) => setNovoPagamento(prev => ({ ...prev, pacienteId: opt?.value }))}
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium mb-1">Profissional</label>
-                      <Select
-                        options={profissionaisOptions}
-                        value={profissionaisOptions.find(opt => opt.value === novoPagamento.profissionalId) || null}
-                        onChange={(opt) => setNovoPagamento(prev => ({ ...prev, profissionalId: opt?.value }))}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium mb-1">Valor</label>
-                      <input
-                        type="number"
-                        value={novoPagamento.valor}
-                        onChange={(e) => setNovoPagamento({ ...novoPagamento, valor: e.target.value })}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium mb-1">Data</label>
-                      <input
-                        type="date"
-                        value={novoPagamento.data}
-                        onChange={(e) => setNovoPagamento({ ...novoPagamento, data: e.target.value })}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium mb-1">Tipo de Pagamento</label>
-                      <select
-                        value={novoPagamento.tipoPagamento}
-                        onChange={(e) => setNovoPagamento({ ...novoPagamento, tipoPagamento: e.target.value })}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
-                      >
-                        <option value="">Selecione</option>
-                        <option value="Particular">Particular</option>
-                        <option value="Convênio">Convênio</option>
-                        <option value="Comissão">Comissão</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium mb-1">Status</label>
-                      <select
-                        value={novoPagamento.status}
-                        onChange={(e) => setNovoPagamento({ ...novoPagamento, status: e.target.value })}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
-                      >
-                        <option value="">Selecione</option>
-                        <option value="Pendente">Pendente</option>
-                        <option value="Pago">Pago</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex justify-end gap-2 border-t px-4 py-2">
-                  <button
-                    onClick={() => setShowModal(false)}
-                    className="bg-gray-400 text-white hover:bg-gray-500 px-4 py-2 rounded-md"
-                  >
-                    Cancelar
-                  </button>
-                  <button
-                    onClick={handleSalvarPagamento}
-                    className="bg-blue-500 text-white hover:bg-blue-600 px-4 py-2 rounded-md"
-                  >
-                    Salvar
-                  </button>
-                </div>
-              </div>
+            <div className="col-span-1">
+              <label className="block text-sm font-medium mb-1">Paciente</label>
+              <Select
+                options={pacientesOptions}
+                value={pacientesOptions.find(opt => opt.value === novoPagamento.pacienteId) || null}
+                onChange={(opt) => setNovoPagamento(prev => ({ ...prev, pacienteId: opt?.value }))}
+              />
             </div>
-          )}
 
-       
+            <div className="col-span-1">
+              <label className="block text-sm font-medium mb-1">Profissional</label>
+              <Select
+                options={profissionaisOptions}
+                value={profissionaisOptions.find(opt => opt.value === novoPagamento.profissionalId) || null}
+                onChange={(opt) => setNovoPagamento(prev => ({ ...prev, profissionalId: opt?.value }))}
+              />
+            </div>
+
+            {/* </div> */}
+
+            {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-4"> */}
+
+            <div className="col-span-1">
+              <label className="block text-sm font-medium mb-1">Valor</label>
+              <input
+                type="number"
+                value={novoPagamento.valor}
+                onChange={(e) => setNovoPagamento({ ...novoPagamento, valor: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+              />
+            </div>
+
+            <div className="col-span-1">
+              <label className="block text-sm font-medium mb-1">Data</label>
+              <input
+                type="date"
+                value={novoPagamento.data}
+                onChange={(e) => setNovoPagamento({ ...novoPagamento, data: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm" />
+            </div>
+
+            {/* </div> */}
+
+            {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-4"> */}
+
+            <div className="col-span-1">
+              <label className="block text-sm font-medium mb-1">Tipo de Pagamento</label>
+              <select
+                value={novoPagamento.tipoPagamento}
+                onChange={(e) => setNovoPagamento({ ...novoPagamento, tipoPagamento: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm">
+                <option value="">Selecione</option>
+                <option value="Particular">Particular</option>
+                <option value="Convênio">Convênio</option>
+                <option value="Comissão">Comissão</option>
+              </select>
+            </div>
+
+            <div className="col-span-1">
+              <label className="block text-sm font-medium mb-1">Status</label>
+              <select
+                value={novoPagamento.status}
+                onChange={(e) => setNovoPagamento({ ...novoPagamento, status: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm">
+                <option value="">Selecione</option>
+                <option value="Pendente">Pendente</option>
+                <option value="Pago">Pago</option>
+              </select>
+            </div>
+
+          </div>
+
+          {/* </div> */}
+
+          <div className="flex items-center justify-end w-full gap-3 mt-6">
+
+            <button onClick={() => closeModal(false)} className="bg-gray-400 text-white hover:bg-gray-500 px-4 py-2 rounded-md">
+              Cancelar
+            </button>
+
+            <button
+              onClick={handleSalvarPagamento} className="bg-blue-500 text-white hover:bg-blue-600 px-4 py-2 rounded-md">
+              Salvar
+            </button>
+
+          </div>
+        </form>
+
+        {/* )} */}
+      </Modal>
+
     </>
   );
 };

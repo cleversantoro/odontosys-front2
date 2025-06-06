@@ -266,11 +266,13 @@ export default function ConsultasLista() {
         {/* Moda;        */}
         <Modal isOpen={isOpen} onClose={closeModal} className="max-w-[584px] p-5 lg:p-10">
           <form className="">
+
             <h4 className="mb-6 text-lg font-medium text-gray-800 dark:text-white/90">
               Personal Information
             </h4>
 
             <div className="grid grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-2">
+
               <div className="col-span-1">
                 <Label>Pacientes</Label>
                 <Input type="text"
@@ -353,13 +355,10 @@ export default function ConsultasLista() {
             </div>
 
             <div className="flex items-center justify-end w-full gap-3 mt-6">
-              <Button size="sm" variant="outline" onClick={closeModal}>
-                Close
-              </Button>
-              <Button size="sm" onClick={handleSave}>
-                Save Changes
-              </Button>
+              <Button size="sm" variant="outline" onClick={closeModal}>Fechar</Button>
+              <Button size="sm" onClick={handleSave}>Salvar</Button>
             </div>
+
           </form>
         </Modal>
 
